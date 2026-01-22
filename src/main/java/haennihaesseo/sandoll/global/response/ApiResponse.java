@@ -34,16 +34,6 @@ public class ApiResponse<T> {
         return new ResponseEntity<>(body, httpStatus);
     }
 
-    public static <T> ApiResponse<T> success(String message, T data) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .status(200)
-                .message(message)
-                .code("OK")
-                .data(data)
-                .timestamp(OffsetDateTime.now())
-                .build();
-    }
     // ===================== 성공 응답 ==========================
 
     // 성공 200 OK
