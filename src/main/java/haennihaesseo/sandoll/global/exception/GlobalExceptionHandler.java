@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         return ApiResponse.fail(
-            ErrorStatus.CONFLICT, ex.getMessage() != null ? ex.getMessage() : "이미 사용 중인 값입니다."
+            ErrorStatus.CONFLICT
         );
     }
 
