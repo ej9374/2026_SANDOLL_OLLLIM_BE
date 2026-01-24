@@ -82,7 +82,7 @@ public class ApiResponse<T> {
 
     private static <T> ResponseEntity<ApiResponse<T>> error(BaseErrorStatus errorStatus) {
         ApiResponse<T> body = ApiResponse.<T>builder()
-            .success(errorStatus.getHttpStatus().is2xxSuccessful())
+            .success(false)
             .status(errorStatus.getHttpStatus().value())
             .message(errorStatus.getMessage())
             .code(errorStatus.getCode())
