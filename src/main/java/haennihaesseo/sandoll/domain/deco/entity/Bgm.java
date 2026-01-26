@@ -21,8 +21,8 @@ public class Bgm {
     @Column(name = "bgm_url", nullable = false)
     private String bgmUrl;
 
-    @Column(name = "is_active", columnDefinition = "TINYINT(1) DEFAULT 1")
-    private Boolean isActive = true;
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "letter_id", nullable = false)
