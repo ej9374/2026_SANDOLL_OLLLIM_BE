@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.deco.entity;
 
+import haennihaesseo.sandoll.domain.letter.entity.Letter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,10 @@ public class Bgm {
     @Column(name = "bgm_url", nullable = false)
     private String bgmUrl;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "is_active", columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean isActive = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "letter_id", nullable = false)
+    private Letter letter;
 }
