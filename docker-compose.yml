@@ -12,22 +12,15 @@ services:
       - .env.prod
     volumes:
       - /home/ubuntu/secrets:/secrets:ro
-    depends_on:
-      redis:
-        condition: service_healthy
     networks:
-      - backend
+      - olllim-bridge
     restart: unless-stopped
 
   # 레디스 서비스 (공용으로 사용)
   redis:
     image: redis:7-alpine
     container_name: redis
-    command: >
-      redis-server
-      --protected-mode yes
-      --requirepass ${REDIS_PASSWORD}
-      --appendonly yes
+    command: ["redis-server", "--protected-mode", "yes", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes"]
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 5s
@@ -35,11 +28,12 @@ services:
     volumes:
       - redis-data:/data
     networks:
-      - backend
+      - olllim-bridge
     restart: unless-stopped
 
 networks:
-  backend:
+  olllim-bridge:
+    name: olllim-bridge
 
 volumes:
   redis-data:
