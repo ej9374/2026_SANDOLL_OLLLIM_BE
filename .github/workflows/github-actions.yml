@@ -2,8 +2,7 @@ name: CI/CD
 
 on:
   push:
-#    branches: [ "main" ]
-    branches: [ "ci/#2" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
