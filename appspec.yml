@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/app/ # 파일을 복사할 위치
+    overwrite: yes
+
+permissions:
+  - object: /home/ubuntu/app/
+    pattern: "**/*.sh" # 모든 .sh 파일에 대해
+    owner: ubuntu
+    group: ubuntu
+    mode: 755 # 실행 권한 부여
+
+hooks:
+  AfterInstall:
+    - location: run.sh # Zip 안에 들어있을 '트리거' 파일 이름
+      timeout: 300
+      runas: ubuntu
