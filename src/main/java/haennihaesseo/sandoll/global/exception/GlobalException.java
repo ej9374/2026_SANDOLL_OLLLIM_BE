@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class GlobalException extends RuntimeException{
-    protected final BaseErrorStatus errorStatus;
+  protected final BaseErrorStatus errorStatus;
 
-    public GlobalException(BaseErrorStatus errorStatus) {
-        super(errorStatus.getMessage());
-        this.errorStatus = errorStatus;
-    }
+  public GlobalException(BaseErrorStatus errorStatus) {
+    super(errorStatus.getMessage());
+    this.errorStatus = errorStatus;
+  }
 }
