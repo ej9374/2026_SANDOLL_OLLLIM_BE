@@ -1,6 +1,6 @@
 package haennihaesseo.sandoll.global.auth.controller;
 
-import haennihaesseo.sandoll.global.auth.dto.TokenResponseDto;
+import haennihaesseo.sandoll.global.auth.dto.TokenDto;
 import haennihaesseo.sandoll.global.auth.service.TokenService;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import haennihaesseo.sandoll.global.status.SuccessStatus;
@@ -19,19 +19,19 @@ public class TokenController {
   private final TokenService tokenService;
 
   @GetMapping
-  public ResponseEntity<ApiResponse<TokenResponseDto>> issueToken(
+  public ResponseEntity<ApiResponse<TokenDto.TokenResponseDto>> issueToken(
       @RequestHeader("tmpKey") String tmpKey
   ) {
-    TokenResponseDto issueTokenResponse = tokenService.issueTokens(tmpKey);
+    TokenDto.TokenResponseDto issueTokenResponse = tokenService.issueTokens(tmpKey);
 
     return ApiResponse.success(SuccessStatus.OK, issueTokenResponse);
   }
 
   @GetMapping("/reissue")
-  public ResponseEntity<ApiResponse<String>> reissueAccessToken(
+  public ResponseEntity<ApiResponse<TokenDto.ReissueResponseDto>> reissueAccessToken(
       @RequestHeader("refreshToken") String refreshToken
   ) {
-    String accessToken = tokenService.reissueAccessToken(refreshToken);
+    TokenDto.ReissueResponseDto accessToken = tokenService.reissueAccessToken(refreshToken);
 
     return ApiResponse.success(SuccessStatus.OK, accessToken);
   }

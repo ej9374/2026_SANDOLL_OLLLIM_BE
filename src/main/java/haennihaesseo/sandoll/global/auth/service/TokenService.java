@@ -2,7 +2,7 @@ package haennihaesseo.sandoll.global.auth.service;
 
 import haennihaesseo.sandoll.domain.user.entity.User;
 import haennihaesseo.sandoll.domain.user.repository.UserRepository;
-import haennihaesseo.sandoll.global.auth.dto.TokenResponseDto;
+import haennihaesseo.sandoll.global.auth.dto.TokenDto;
 import haennihaesseo.sandoll.global.auth.util.JwtUtil;
 import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.infra.RedisClient;
@@ -31,7 +31,7 @@ public class TokenService {
    * @return
    */
   @Transactional
-  public TokenResponseDto issueTokens(String tmpKey) {
+  public TokenDto.TokenResponseDto issueTokens(String tmpKey) {
     // 임시 토큰 유효성 검증
     jwtUtil.validateTmpKey(tmpKey);
     Long userId = jwtUtil.getUserIdFromTmpKey(tmpKey);
@@ -49,7 +49,7 @@ public class TokenService {
     String refreshToken = jwtUtil.generateRefreshToken(user.getUserId());
     redisClient.setData("REFRESH_TOKEN_", userId.toString(), refreshToken, REFRESH_TOKEN_EXPIRATION_MS);
 
-    return TokenResponseDto.builder()
+    return TokenDto.TokenResponseDto.builder()
         .userId(userId)
         .accessToken(accessToken)
         .refreshToken(refreshToken)
@@ -62,11 +62,13 @@ public class TokenService {
    * @param refreshToken
    * @return
    */
-  public String reissueAccessToken(String refreshToken) {
+  public TokenDto.ReissueResponseDto reissueAccessToken(String refreshToken) {
     jwtUtil.validateRefreshToken(refreshToken);
     Long userId = jwtUtil.getUserIdFromRefreshToken(refreshToken);
 
-    return jwtUtil.generateAccessToken(userId);
+    return TokenDto.ReissueResponseDto.builder()
+        .accessToken(jwtUtil.generateAccessToken(userId))
+        .build();
   }
 
 }
