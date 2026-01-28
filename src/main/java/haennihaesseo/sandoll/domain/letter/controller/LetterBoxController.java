@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/letter")
 @RequiredArgsConstructor
 @Slf4j
-public class LetterController {
+public class LetterBoxController {
 
     private final LetterService letterService;
 

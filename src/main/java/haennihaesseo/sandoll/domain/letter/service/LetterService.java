@@ -1,6 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.service;
 
-import haennihaesseo.sandoll.domain.letter.converter.LetterConverter;
+import haennihaesseo.sandoll.domain.letter.converter.LetterBoxConverter;
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterType;
 import haennihaesseo.sandoll.domain.letter.dto.request.OrderStatus;
 import haennihaesseo.sandoll.domain.letter.dto.response.*;
@@ -32,7 +32,7 @@ public class LetterService {
     private final ReceiverLetterRepository receiverLetterRepository;
     private final UserRepository userRepository;
     private final WordRepository wordRepository;
-    private final LetterConverter letterConverter;
+    private final LetterBoxConverter letterBoxConverter;
 
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
 
@@ -82,7 +82,7 @@ public class LetterService {
 
         log.info("최종 응답 생성");
 
-        return letterConverter.toLetterDetailResponse(letter, letter.getBgm(),
+        return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                         letter.getTemplate(), letter.getDefaultFont(),
                         letter.getVoice(), words);
     }

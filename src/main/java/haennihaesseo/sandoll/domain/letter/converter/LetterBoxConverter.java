@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class LetterConverter {
+public class LetterBoxConverter {
 
     public LetterDetailResponse toLetterDetailResponse(Letter letter, Bgm bgm, Template template, Font font, Voice voice, List<Word> words){
         return LetterDetailResponse.builder()
