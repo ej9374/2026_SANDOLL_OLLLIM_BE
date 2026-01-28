@@ -26,6 +26,7 @@ public class CachedLetter implements Serializable {
 
     private String voiceUrl;
     private Integer duration;
+    private String content;
 
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
