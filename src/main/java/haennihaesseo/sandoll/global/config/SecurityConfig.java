@@ -31,6 +31,7 @@ public class SecurityConfig {
   private final JwtFilter jwtFilter;
   private final OAuthLoginSuccessHandler oAuthLoginSuccessHandler;
   private final OAuthLoginFailureHandler oAuthLoginFailureHandler;
+  private final ObjectMapper objectMapper;
 
   private static final String[] PUBLIC_URLS = {
       "/",
@@ -60,13 +61,12 @@ public class SecurityConfig {
   @Bean
   public AuthenticationEntryPoint authenticationEntryPoint() {
     return (request, response, authException) -> {
-      ObjectMapper mapper = new ObjectMapper();
       ErrorStatus errorStatus = ErrorStatus.UNAUTHORIZED;
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       response.setCharacterEncoding("UTF-8");
       response.setStatus(errorStatus.getHttpStatus().value());
       ResponseEntity<ApiResponse<Void>> errorResponse = ApiResponse.fail(ErrorStatus.UNAUTHORIZED);
-      response.getWriter().write(mapper.writeValueAsString(errorResponse));
+      response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     };
   }
 

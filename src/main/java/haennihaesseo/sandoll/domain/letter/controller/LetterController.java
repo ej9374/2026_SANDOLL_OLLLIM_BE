@@ -30,7 +30,6 @@ public class LetterController {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @RequestParam(name = "status") OrderStatus orderStatus
     ) {
-        log.info("receive 컨트롤러");
         Long userId = userPrincipal.getUser().getUserId();
         List<ReceiveLetterResponse> responses = letterService.getReceivedLettersByUser(userId, orderStatus);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_201, responses);
