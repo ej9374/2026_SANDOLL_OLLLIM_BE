@@ -1,6 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.service;
 
-import haennihaesseo.sandoll.domain.letter.converter.LetterConverter;
+import haennihaesseo.sandoll.domain.letter.converter.LetterBoxConverter;
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterType;
 import haennihaesseo.sandoll.domain.letter.dto.request.OrderStatus;
 import haennihaesseo.sandoll.domain.letter.dto.response.*;
@@ -26,13 +26,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class LetterService {
+public class LetterBoxService {
 
     private final LetterRepository letterRepository;
     private final ReceiverLetterRepository receiverLetterRepository;
     private final UserRepository userRepository;
     private final WordRepository wordRepository;
-    private final LetterConverter letterConverter;
+    private final LetterBoxConverter letterBoxConverter;
+    private final LetterDetailService letterDetailService;
 
     public List<ReceiveLetterResponse> getReceivedLettersByUser(Long userId, OrderStatus status) {
 
@@ -60,31 +61,7 @@ public class LetterService {
     }
 
     public LetterDetailResponse getLetterDetailsByLetter(Long letterId) {
-
-        Letter letter = letterRepository.findById(letterId)
-                .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-        log.info("단어 조회 시작");
-        List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
-        List<LetterDetailResponse.WordInfo> wordInfos = new ArrayList<>();
-
-        log.info("word를 wordInfo 리스트로 변환시작");
-        for (Word word : words) {
-            wordInfos.add(
-                    LetterDetailResponse.WordInfo.builder()
-                            .wordId(word.getWordId())
-                            .word(word.getWord())
-                            .startTime(word.getStartTime())
-                            .endTime(word.getEndTime())
-                            .build()
-            );
-        }
-
-        log.info("최종 응답 생성");
-
-        return letterConverter.toLetterDetailResponse(letter, letter.getBgm(),
-                        letter.getTemplate(), letter.getDefaultFont(),
-                        letter.getVoice(), words);
+         return letterDetailService.getLetterDetails(letterId);
     }
 
     public void hideLetter(Long userId, LetterType letterType, List<Long> letterIds) {

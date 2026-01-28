@@ -6,7 +6,7 @@ import haennihaesseo.sandoll.domain.letter.dto.request.OrderStatus;
 import haennihaesseo.sandoll.domain.letter.dto.response.ReceiveLetterResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.SendLetterResponse;
 import haennihaesseo.sandoll.global.auth.principal.UserPrincipal;
-import haennihaesseo.sandoll.domain.letter.service.LetterService;
+import haennihaesseo.sandoll.domain.letter.service.LetterBoxService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,9 @@ import java.util.List;
 @RequestMapping("/api/letter")
 @RequiredArgsConstructor
 @Slf4j
-public class LetterController {
+public class LetterBoxController {
 
-    private final LetterService letterService;
+    private final LetterBoxService letterBoxService;
 
     @GetMapping("/received")
     public ResponseEntity<ApiResponse<List<ReceiveLetterResponse>>> getInbox(
@@ -31,7 +31,7 @@ public class LetterController {
             @RequestParam(name = "status") OrderStatus orderStatus
     ) {
         Long userId = userPrincipal.getUser().getUserId();
-        List<ReceiveLetterResponse> responses = letterService.getReceivedLettersByUser(userId, orderStatus);
+        List<ReceiveLetterResponse> responses = letterBoxService.getReceivedLettersByUser(userId, orderStatus);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_201, responses);
     }
 
@@ -40,7 +40,7 @@ public class LetterController {
             @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable(name = "letterId") Long letterId
     ){
-        LetterDetailResponse response = letterService.getLetterDetailsByLetter(letterId);
+        LetterDetailResponse response = letterBoxService.getLetterDetailsByLetter(letterId);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_202, response);
     }
 
@@ -50,7 +50,7 @@ public class LetterController {
             @RequestBody LetterDeleteRequest request
     ){
         Long userId = userPrincipal.getUser().getUserId();
-        letterService.hideLetter(userId, request.getType(), request.getLetterIds());
+        letterBoxService.hideLetter(userId, request.getType(), request.getLetterIds());
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_203);
     }
 
@@ -60,7 +60,7 @@ public class LetterController {
             @RequestParam(name = "status") OrderStatus orderStatus
     ){
         Long userId = userPrincipal.getUser().getUserId();
-        List<SendLetterResponse> responses = letterService.getSentLettersByUser(userId, orderStatus);
+        List<SendLetterResponse> responses = letterBoxService.getSentLettersByUser(userId, orderStatus);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_204, responses);
     }
 }
