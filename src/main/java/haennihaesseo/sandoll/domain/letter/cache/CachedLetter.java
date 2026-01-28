@@ -20,7 +20,9 @@ import java.util.List;
 public class CachedLetter implements Serializable {
 
     @Id
-    private String id;
+    private String letterId;
+
+    private String letterKey;
 
     private String voiceUrl;
     private Integer duration;
