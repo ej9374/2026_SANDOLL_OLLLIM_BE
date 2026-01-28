@@ -28,11 +28,9 @@ public class LetterDetailService {
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        log.info("단어 조회 시작");
         List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
         List<LetterDetailResponse.WordInfo> wordInfos = new ArrayList<>();
 
-        log.info("word를 wordInfo 리스트로 변환시작");
         for (Word word : words) {
             wordInfos.add(
                     LetterDetailResponse.WordInfo.builder()
