@@ -36,10 +36,10 @@ public class TemplateController {
     )
     @PostMapping
     ResponseEntity<ApiResponse<TemplateImageResponse>> setTemplate(
-        @RequestHeader String letterKey,
+        @RequestHeader(name = "letterId") String letterId,
         @RequestParam(name = "templateId") Long templateId
     ){
-        TemplateImageResponse response = templateService.setTemplateToLetter(letterKey, templateId);
+        TemplateImageResponse response = templateService.setTemplateToLetter(letterId, templateId);
         return ApiResponse.success(DecoSuccessStatus.SUCCESS_402, response);
     }
 }

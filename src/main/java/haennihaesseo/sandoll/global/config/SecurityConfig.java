@@ -47,7 +47,7 @@ public class SecurityConfig {
       "/api/letter/{letterId}",
       "/api/letter/view",
       "/api/font/upload",
-      "/api/deco"
+      "/api/deco/**"
   };
 
   private static final String[] ALLOWED_ORIGINS = {

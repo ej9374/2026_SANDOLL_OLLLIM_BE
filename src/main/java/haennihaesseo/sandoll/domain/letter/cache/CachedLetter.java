@@ -31,6 +31,9 @@ public class CachedLetter implements Serializable {
     private String title;
     private String sender;
 
+    private Long templateId;
+    private String bgmUrl;
+
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
 
@@ -58,4 +61,13 @@ public class CachedLetter implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public void setBgmUrl(String bgmUrl) {
+        this.bgmUrl = bgmUrl;
+    }
+
 }
