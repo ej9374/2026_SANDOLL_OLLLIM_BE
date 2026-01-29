@@ -6,7 +6,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,26 +27,26 @@ public class Font {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "bone_keyword", nullable = false)
+    @Column(name = "bone_keyword", nullable = true)
     private Bone boneKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_keyword", nullable = false)
+    @Column(name = "target_keyword", nullable = true)
     private Target targetKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "situation_keyword", nullable = false)
+    @Column(name = "situation_keyword", nullable = true)
     private Situation situationKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "distance_keyword", nullable = false)
+    @Column(name = "distance_keyword", nullable = true)
     private Distance distanceKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "dynamic_keyword", nullable = false)
+    @Column(name = "dynamic_keyword", nullable = true)
     private Dynamic dynamicKeyword;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "speed_keyword", nullable = false)
+    @Column(name = "speed_keyword", nullable = true)
     private Speed speedKeyword;
 }
