@@ -38,6 +38,11 @@ public class LetterService {
     // 1. STT 처리 (S3 업로드 전에 처리)
     SttResult sttResult = googleSttClient.transcribe(file);
 
+    // 10글자 이하일 경우 예외 처리
+    if (sttResult.getFullText().replaceAll("\\s+", "").length() <= 10) {
+      throw new LetterException(LetterErrorStatus.TOO_SHORT_CONTENT);
+    }
+
     // 2. S3 업로드
     String fileUrl = s3Client.uploadFile("voice", file);
 
