@@ -33,6 +33,7 @@ public enum ErrorStatus implements BaseErrorStatus {
    *  Error Code
    *  500 : 서버 내부 오류
    */
+  STT_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "STT 서비스 오류입니다."),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "500", "서버 내부 오류입니다.");
 
   private final HttpStatus httpStatus;

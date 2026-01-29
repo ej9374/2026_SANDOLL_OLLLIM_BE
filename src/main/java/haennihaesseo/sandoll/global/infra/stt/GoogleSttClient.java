@@ -3,6 +3,8 @@ package haennihaesseo.sandoll.global.infra.stt;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.speech.v1.*;
 import com.google.protobuf.ByteString;
+import haennihaesseo.sandoll.global.exception.GlobalException;
+import haennihaesseo.sandoll.global.status.ErrorStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -61,13 +63,14 @@ public class GoogleSttClient {
             return parseResponse(response);
         } catch (IOException e) {
             log.error("Google STT 처리 실패", e);
-            throw new RuntimeException("음성 인식 처리 중 오류가 발생했습니다.", e);
+            throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("음성 인식이 중단되었습니다.", e);
+            log.error("Google STT 처리 중 인터럽트 발생", e);
+            throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
         } catch (ExecutionException e) {
             log.error("Google STT 비동기 처리 실패", e);
-            throw new RuntimeException("음성 인식 처리 중 오류가 발생했습니다.", e);
+            throw new GlobalException(ErrorStatus.STT_SERVICE_ERROR);
         }
     }
 
