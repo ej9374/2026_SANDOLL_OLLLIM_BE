@@ -19,6 +19,7 @@ import haennihaesseo.sandoll.global.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class LetterBoxService {
 
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Long> letterIds = (status.equals(OrderStatus.EARLIEST))
+        List<Long> letterIds = (status.equals(OrderStatus.LATEST))
                 ? receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtDesc(userId)
                 : receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(userId);
 
@@ -64,29 +65,14 @@ public class LetterBoxService {
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        log.info("단어 조회 시작");
         List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
-        List<LetterDetailResponse.WordInfo> wordInfos = new ArrayList<>();
-
-        log.info("word를 wordInfo 리스트로 변환시작");
-        for (Word word : words) {
-            wordInfos.add(
-                    LetterDetailResponse.WordInfo.builder()
-                            .wordId(word.getWordId())
-                            .word(word.getWord())
-                            .startTime(word.getStartTime())
-                            .endTime(word.getEndTime())
-                            .build()
-            );
-        }
-
-        log.info("최종 응답 생성");
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                         letter.getTemplate(), letter.getDefaultFont(),
                         letter.getVoice(), words);
     }
 
+    @Transactional
     public void hideLetter(Long userId, LetterType letterType, List<Long> letterIds) {
 
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));

@@ -35,9 +35,8 @@ public class LetterBoxController {
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_201, responses);
     }
 
-    @GetMapping("/{letterId}")
+    @GetMapping("/user/{letterId}")
     public ResponseEntity<ApiResponse<LetterDetailResponse>> getLetterDetail(
-            @AuthenticationPrincipal UserPrincipal userPrincipal,
             @PathVariable(name = "letterId") Long letterId
     ){
         LetterDetailResponse response = letterBoxService.getLetterDetailsByLetter(letterId);
