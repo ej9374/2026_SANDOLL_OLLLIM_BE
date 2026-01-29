@@ -1,6 +1,5 @@
 package haennihaesseo.sandoll.domain.deco.entity;
 
-import haennihaesseo.sandoll.domain.deco.entity.enums.Color;
 import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
 import haennihaesseo.sandoll.domain.deco.entity.enums.Type;
 import jakarta.persistence.*;
