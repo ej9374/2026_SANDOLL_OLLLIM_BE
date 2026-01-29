@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -24,6 +25,7 @@ public class FontUploadService {
    * @param fontNames
    * @return 업로드된 폰트 개수
    */
+  @Transactional
   public int uploadFonts(List<MultipartFile> fonts, List<String> fontNames, String directory) {
     int uploadCount = 0;
     for (MultipartFile font : fonts) {
