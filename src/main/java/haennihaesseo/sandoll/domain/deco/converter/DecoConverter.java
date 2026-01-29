@@ -30,7 +30,12 @@ public class DecoConverter {
                 .map(b -> BgmsResponse.BgmDto.builder()
                         .bgmId(b.getBgmId())
                         .bgmUrl(b.getBgmUrl())
-                        .keyword(Arrays.stream(b.getKeyword().split(",")).toList())
+                        .keyword(b.getKeyword() != null ?
+                                Arrays.stream(b.getKeyword().split(","))
+                                        .map(String::trim)
+                                        .filter(s -> !s.isEmpty())
+                                        .toList()
+                                : List.of())
                         .name(b.getName())
                         .build())
                 .toList();
