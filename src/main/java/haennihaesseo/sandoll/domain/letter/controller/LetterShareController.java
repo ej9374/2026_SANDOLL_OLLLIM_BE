@@ -10,6 +10,7 @@ import haennihaesseo.sandoll.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class LetterShareController {
     )
     @PostMapping("/view")
     public ResponseEntity<ApiResponse<LetterDetailResponse>> getLetterDetailByLink(
-            @RequestBody LetterLinkViewRequest letterLinkViewRequest
+            @RequestBody @Valid LetterLinkViewRequest letterLinkViewRequest
     ){
         LetterDetailResponse response = letterShareService.getLetterDetailsByLink(letterLinkViewRequest.getSecretLetterId(), letterLinkViewRequest.getPassword());
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_601, response);

@@ -9,6 +9,7 @@ import haennihaesseo.sandoll.global.auth.principal.UserPrincipal;
 import haennihaesseo.sandoll.domain.letter.service.LetterBoxService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class LetterBoxController {
     @PostMapping("/delete")
     public ResponseEntity<ApiResponse<Void>> deleteLetter(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @RequestBody LetterDeleteRequest request
+            @RequestBody @Valid LetterDeleteRequest request
     ){
         Long userId = userPrincipal.getUser().getUserId();
         letterBoxService.hideLetter(userId, request.getType(), request.getLetterIds());
