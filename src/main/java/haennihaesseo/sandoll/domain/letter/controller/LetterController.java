@@ -41,7 +41,7 @@ public class LetterController {
   @Operation(
       summary = "[3.2] 편지 정보 입력 및 내용 수정"
   )
-  @PatchMapping("/{letterId}")
+  @PatchMapping
   public ResponseEntity<ApiResponse<Void>> inputLetterInfo(
       @RequestHeader("letterId") String letterId,
       @RequestBody @Valid LetterInfoRequest request
