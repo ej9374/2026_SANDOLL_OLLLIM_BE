@@ -31,11 +31,11 @@ public class Letter {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", nullable = true, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = true)
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,7 +43,7 @@ public class Letter {
     private Font defaultFont;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id", nullable = true)
+    @JoinColumn(name = "template_id", nullable = false)
     private Template template;
 
     @Column(name = "image_url", nullable = true)
@@ -52,9 +52,6 @@ public class Letter {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "envelope_id", nullable = true)
     private Envelope envelope;
-
-    @Column(name = "receiver_type", nullable = true)
-    private ReceiverType receiverType;
 
     @Column(name = "context_keyword", nullable = false)
     private String contextKeyword;
@@ -69,6 +66,11 @@ public class Letter {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bgmId", nullable = true)
     private Bgm bgm;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "letter_status", nullable = false)
+    private LetterStatus letterStatus = LetterStatus.VISIBLE;
 
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp

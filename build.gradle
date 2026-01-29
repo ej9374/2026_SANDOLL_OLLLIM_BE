@@ -40,6 +40,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 
 	// DB (MySQL)
 	runtimeOnly 'com.mysql:mysql-connector-j:8.4.0'
@@ -52,6 +53,14 @@ dependencies {
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15"
+
+	// WebClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// Google Cloud Speech-to-Text
+	implementation 'com.google.cloud:google-cloud-speech:4.52.0'
 }
 
 tasks.named('test') {

@@ -17,6 +17,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -38,6 +40,13 @@ public class SecurityConfig {
       "/oauth2/authorization/kakao",
       "/api/token/**",
       "/actuator/health",
+      "/swagger-ui/**",
+      "/swagger-ui.html",
+      "/v3/api-docs/**",
+      "/api/letter/voice",
+      "/api/letter/{letterId}",
+      "/api/letter/view",
+      "/api/font/upload",
       "/api/deco"
   };
 
@@ -94,4 +103,6 @@ public class SecurityConfig {
     return httpSecurity.build();
   }
 
+  @Bean
+  public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 }
