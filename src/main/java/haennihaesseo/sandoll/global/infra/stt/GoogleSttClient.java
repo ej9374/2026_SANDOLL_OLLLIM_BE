@@ -74,6 +74,7 @@ public class GoogleSttClient {
     // 인코딩 하는 부분은 프론트 녹음 방식에 따라 추후 수정 필요, 현재는 WAV 파일로 테스트
     private RecognitionConfig buildConfig(RecognitionConfig.AudioEncoding encoding) {
         RecognitionConfig.Builder builder = RecognitionConfig.newBuilder()
+                .setEncoding(encoding)
                 .setLanguageCode(LANGUAGE_CODE)
                 .setEnableWordTimeOffsets(true)
                 .setEnableAutomaticPunctuation(true)
