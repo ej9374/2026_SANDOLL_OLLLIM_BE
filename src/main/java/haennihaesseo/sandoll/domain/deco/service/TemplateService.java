@@ -1,6 +1,7 @@
 package haennihaesseo.sandoll.domain.deco.service;
 
 import haennihaesseo.sandoll.domain.deco.converter.DecoConverter;
+import haennihaesseo.sandoll.domain.deco.dto.response.TemplateImageResponse;
 import haennihaesseo.sandoll.domain.deco.dto.response.TemplatesResponse;
 import haennihaesseo.sandoll.domain.deco.entity.Template;
 import haennihaesseo.sandoll.domain.deco.repository.TemplateRepository;
@@ -26,5 +27,9 @@ public class TemplateService {
     public TemplatesResponse getAllTemplates() {
         List<Template> templates = templateRepository.findAll();
         return decoConverter.toTemplatesResponse(templates);
+    }
+
+    public TemplateImageResponse setTemplateToLetter(String letterKey, Long templateId) {
+
     }
 }
