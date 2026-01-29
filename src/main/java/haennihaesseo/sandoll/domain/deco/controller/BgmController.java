@@ -27,7 +27,7 @@ public class BgmController {
     public ResponseEntity<ApiResponse<BgmsResponse>> getAllBgms(
             @RequestHeader(name = "letterId") String letterId
     ) {
-        BgmsResponse response = bgmService.getBgmsByLetterKey(letterId);
+        BgmsResponse response = bgmService.getBgmsByLetterId(letterId);
         return ApiResponse.success(DecoSuccessStatus.SUCCESS_404, response);
     }
 
