@@ -58,10 +58,8 @@ public class LetterService {
 
     // 4. Redis 저장
     String letterId = UUID.randomUUID().toString();
-    String letterKey = UUID.randomUUID().toString();
     CachedLetter cachedLetter = CachedLetter.builder()
         .letterId(letterId)
-        .letterKey(letterKey)
         .voiceUrl(fileUrl)
         .duration(sttResult.getTotalDuration().intValue())
         .content(sttResult.getFullText())
@@ -73,7 +71,6 @@ public class LetterService {
     // 5. 응답 반환
     return VoiceSaveResponse.builder()
         .letterId(letterId)
-        .letterKey(letterKey)
         .voiceUrl(fileUrl)
         .duration(sttResult.getTotalDuration().intValue())
         .content(sttResult.getFullText())
@@ -83,18 +80,12 @@ public class LetterService {
   /**
    * 편지 정보 입력 및 내용 수정
    * @param letterId
-   * @param letterKey
    * @param request
    */
-  public void inputLetterInfo(String letterId, String letterKey, LetterInfoRequest request) {
+  public void inputLetterInfo(String letterId, LetterInfoRequest request) {
     // Redis에서 CachedLetter 조회
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
         .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-    // letterKey 검증
-    if (!cachedLetter.getLetterKey().equals(letterKey)) {
-      throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
-    }
 
     // 편지 정보 업데이트
     cachedLetter.setInfo(request.getTitle(), request.getSender());

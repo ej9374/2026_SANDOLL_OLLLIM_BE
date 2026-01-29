@@ -9,7 +9,6 @@ import lombok.Getter;
 @Builder
 public class VoiceSaveResponse {
   private String letterId;
-  private String letterKey;
   private String voiceUrl;
   private int duration;
   private String content;

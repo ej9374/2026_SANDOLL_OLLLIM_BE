@@ -1,7 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.entity;
 
 import haennihaesseo.sandoll.domain.deco.entity.Bgm;
-import haennihaesseo.sandoll.domain.deco.entity.Envelope;
 import haennihaesseo.sandoll.domain.deco.entity.Template;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import haennihaesseo.sandoll.domain.user.entity.User;
@@ -39,22 +38,12 @@ public class Letter {
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "default_font_id", nullable = false)
-    private Font defaultFont;
+    @JoinColumn(name = "font_id", nullable = false)
+    private Font font;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id", nullable = false)
     private Template template;
-
-    @Column(name = "image_url", nullable = true)
-    private String imageUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "envelope_id", nullable = true)
-    private Envelope envelope;
-
-    @Column(name = "context_keyword", nullable = false)
-    private String contextKeyword;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "voice_id", nullable = false)

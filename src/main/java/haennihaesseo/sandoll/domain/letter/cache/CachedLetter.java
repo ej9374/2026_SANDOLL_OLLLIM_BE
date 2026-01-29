@@ -30,7 +30,10 @@ public class CachedLetter implements Serializable {
 
     private String title;
     private String sender;
-
+  
+    private String contextKeywords;
+    private String recommendedVoiceFonts;
+  
     private Long templateId;
     private String bgmUrl;
 
