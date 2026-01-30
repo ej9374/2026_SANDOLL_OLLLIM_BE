@@ -26,7 +26,7 @@ public class TemplateController {
             summary = "[4.1] 편지지 전체 조회"
     )
     @GetMapping
-    ResponseEntity<ApiResponse<TemplatesResponse>> getTemplates(){
+    public ResponseEntity<ApiResponse<TemplatesResponse>> getTemplates(){
         TemplatesResponse responses = templateService.getAllTemplates();
         return ApiResponse.success(DecoSuccessStatus.SUCCESS_401, responses);
     }
@@ -35,7 +35,7 @@ public class TemplateController {
             summary = "[4.2] 편지지 편지에 적용"
     )
     @PostMapping
-    ResponseEntity<ApiResponse<TemplateImageResponse>> setTemplate(
+    public ResponseEntity<ApiResponse<TemplateImageResponse>> setTemplate(
         @RequestHeader(name = "letterId") String letterId,
         @RequestParam(name = "templateId") Long templateId
     ){
