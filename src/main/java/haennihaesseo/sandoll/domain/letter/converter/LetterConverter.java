@@ -96,7 +96,7 @@ public class LetterConverter {
         .content(cachedLetter.getContent())
         .title(cachedLetter.getTitle())
         .sender(cachedLetter.getSender())
-        .bgmUrl(cachedLetter.getBgmUrl())
+        .bgmUrl(cachedLetter.getBgmDto().bgmUrl())
         .templateUrl(cachedLetter.getTemplateUrl())
         .words(wordInfos)
         .build();

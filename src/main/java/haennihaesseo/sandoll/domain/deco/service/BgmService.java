@@ -93,7 +93,7 @@ public class BgmService {
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
         if (bgmId == null) {
-            cachedLetter.setBgmUrl(null);
+            cachedLetter.setBgmDto(null);
             cachedLetterRepository.save(cachedLetter);
         } else {
             String jsonBgms = redisClient.getData("bgms", letterId);
@@ -108,7 +108,7 @@ public class BgmService {
                         .findFirst()
                         .orElseThrow(() -> new DecoException(DecoErrorStatus.BGM_NOT_FOUND));
 
-                cachedLetter.setBgmUrl(bgmDto.bgmUrl());
+                cachedLetter.setBgmDto(bgmDto);
                 cachedLetterRepository.save(cachedLetter);
 
             } catch (JsonProcessingException e) {

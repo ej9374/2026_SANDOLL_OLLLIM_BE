@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.cache;
 
+import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +43,7 @@ public class CachedLetter implements Serializable {
 
     private Long templateId;
     private String templateUrl;
-    private String bgmUrl;
+    private BgmsResponse.BgmDto bgmDto;
 
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
@@ -50,14 +51,6 @@ public class CachedLetter implements Serializable {
     @TimeToLive
     @Builder.Default
     private Long ttl = 3600L;  // 1시간 (초 단위)
-
-    public void addWord(CachedWord word) {
-        this.words.add(word);
-    }
-
-    public void addWords(List<CachedWord> words) {
-        this.words.addAll(words);
-    }
 
     public void setInfo(String title, String sender) {
         this.title = title;
@@ -76,8 +69,8 @@ public class CachedLetter implements Serializable {
         this.templateId = templateId;
     }
 
-    public void setBgmUrl(String bgmUrl) {
-        this.bgmUrl = bgmUrl;
+    public void setBgmDto(BgmsResponse.BgmDto bgmDto) {
+        this.bgmDto = bgmDto;
     }
 
 
