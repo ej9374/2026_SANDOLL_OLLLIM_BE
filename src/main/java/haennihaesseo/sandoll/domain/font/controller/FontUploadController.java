@@ -1,5 +1,10 @@
 package haennihaesseo.sandoll.domain.font.controller;
 
+import haennihaesseo.sandoll.domain.font.entity.enums.Bone;
+import haennihaesseo.sandoll.domain.font.entity.enums.Distance;
+import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
+import haennihaesseo.sandoll.domain.font.entity.enums.Situation;
+import haennihaesseo.sandoll.domain.font.entity.enums.Target;
 import haennihaesseo.sandoll.domain.font.service.FontUploadService;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
 import haennihaesseo.sandoll.global.response.ApiResponse;
@@ -36,10 +41,19 @@ public class FontUploadController {
       @Schema(description = "업로드할 폰트 이름 리스트 (파일 순서와 동일해야 함)")
       @RequestPart("fontNames") List<String> fontNames,
       @Schema(description = "저장할 S3 폴더 이름 (local/server인 경우와 voice/context인 경우 분류 위해 존재)", example = "local/fonts/voice")
-      @RequestPart("directory") String directory
-  ) {
+      @RequestPart("directory") String directory,
+      @Schema(description = "폰트 타입 (예: VOICE, CONTEXT 등)", example = "CONTEXT")
+      @RequestPart("type") FontType fontType,
+      @RequestPart(value = "situation", required = false) Situation situation,
+      @RequestPart(value = "distance", required = false) Distance distance,
+      @RequestPart(value = "bone", required = false) Bone bone,
+      @RequestPart(value = "target", required = false) Target target
 
-    int uploadCount = fontUploadService.uploadFonts(fonts, fontNames, directory);
+
+  ) {
+    int uploadCount = 0;
+    if(fontType.equals(FontType.VOICE)) uploadCount = fontUploadService.voiceFontUploadService(fonts, fontNames, directory);
+    else if(fontType.equals(FontType.CONTEXT)) uploadCount = fontUploadService.contextFontUploadService(fonts, fontNames, directory, situation, distance, bone, target);
 
     return ApiResponse.success(SuccessStatus.CREATED, uploadCount + "개의 폰트가 업로드되었습니다.");
 

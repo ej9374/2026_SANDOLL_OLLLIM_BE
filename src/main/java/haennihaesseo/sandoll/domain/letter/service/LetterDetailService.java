@@ -31,7 +31,7 @@ public class LetterDetailService {
         List<Word> words = wordRepository.findByLetterLetterIdOrderByWordOrderAsc(letterId);
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
-                letter.getTemplate(), letter.getDefaultFont(),
+                letter.getTemplate(), letter.getFont(),
                 letter.getVoice(), words);
     }
 }
