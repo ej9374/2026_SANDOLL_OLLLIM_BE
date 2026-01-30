@@ -13,8 +13,6 @@ public enum DecoErrorStatus implements BaseErrorStatus {
 
     BGM_GENERATING(HttpStatus.BAD_REQUEST, "BGM_GENERATING", "현재 배경음악을 생성 중입니다. 잠시 후 다시 확인해주세요."),
     BGM_NOT_FOUND(HttpStatus.NOT_FOUND, "BGM_NOT_FOUND", "해당 bgm을 찾을 수 없습니다."),
-
-    FONT_NOT_FOUND(HttpStatus.NOT_FOUND, "FONT_NOT_FOUND", "해당 폰트를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

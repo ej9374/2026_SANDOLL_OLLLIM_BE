@@ -8,7 +8,9 @@ import haennihaesseo.sandoll.domain.deco.repository.BgmRepository;
 import haennihaesseo.sandoll.domain.deco.repository.TemplateRepository;
 import haennihaesseo.sandoll.domain.deco.status.DecoErrorStatus;
 import haennihaesseo.sandoll.domain.font.entity.Font;
+import haennihaesseo.sandoll.domain.font.exception.FontException;
 import haennihaesseo.sandoll.domain.font.repository.FontRepository;
+import haennihaesseo.sandoll.domain.font.status.FontErrorStatus;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetterRepository;
 import haennihaesseo.sandoll.domain.letter.cache.CachedWord;
@@ -70,7 +72,7 @@ public class LetterSaveService {
                 .orElseThrow(() -> new DecoException(DecoErrorStatus.TEMPLATE_NOT_FOUND));
 
         Font font = fontRepository.findById(cachedLetter.getFontId())
-                .orElseThrow(() -> new DecoException(DecoErrorStatus.FONT_NOT_FOUND));
+                .orElseThrow(() -> new FontException(FontErrorStatus.FONT_NOT_FOUND));
 
         // 목소리 저장
         Voice voice = Voice.builder()
