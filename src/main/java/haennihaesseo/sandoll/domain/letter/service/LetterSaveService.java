@@ -20,6 +20,7 @@ import haennihaesseo.sandoll.domain.letter.entity.Word;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.repository.LetterRepository;
 import haennihaesseo.sandoll.domain.letter.repository.VoiceRepository;
+import haennihaesseo.sandoll.domain.letter.repository.WordRepository;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.domain.letter.util.AESUtil;
 import haennihaesseo.sandoll.domain.user.entity.User;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -46,6 +48,7 @@ public class LetterSaveService {
     private final VoiceRepository voiceRepository;
     private final LetterRepository letterRepository;
     private final BgmRepository bgmRepository;
+    private final WordRepository wordRepository;
     private final AESUtil aesUtil;
 
     /**
@@ -56,7 +59,6 @@ public class LetterSaveService {
      * @return
      */
     @Transactional
-    // 저장해야되는거 voice, bgm, word
     public SecretLetterKeyResponse saveLetterAndLink(Long userId, String letterKey, String password){
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterKey)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
@@ -70,12 +72,14 @@ public class LetterSaveService {
         Font font = fontRepository.findById(cachedLetter.getFontId())
                 .orElseThrow(() -> new DecoException(DecoErrorStatus.FONT_NOT_FOUND));
 
+        // 목소리 저장
         Voice voice = Voice.builder()
                 .voiceUrl(cachedLetter.getVoiceUrl())
                 .duration(cachedLetter.getDuration())
                 .build();
         voiceRepository.save(voice);
 
+        // 브금 저장
         BgmsResponse.BgmDto bgmDto = cachedLetter.getBgmDto();
         Bgm bgm = null;
         if (bgmDto != null) {
@@ -87,6 +91,7 @@ public class LetterSaveService {
             bgmRepository.save(bgm);
         }
 
+        // 편지 저장
         Letter letter = Letter.builder()
                 .senderName(cachedLetter.getSender())
                 .title(cachedLetter.getTitle())
@@ -99,6 +104,18 @@ public class LetterSaveService {
                 .voice(voice)
                 .build();
         letterRepository.save(letter);
+
+        // todo 성능 위해 추후 리팩토링 예정
+        // word 저장
+        cachedLetter.getWords().stream()
+                .sorted(Comparator.comparing(CachedWord::getWordOrder))
+                .map(w -> Word.builder()
+                        .word(w.getWord())
+                        .startTime(w.getStartTime())
+                        .endTime(w.getEndTime())
+                        .letter(letter)
+                        .build())
+                .forEach(wordRepository::save);
 
         try{
             String secretLetterKey = aesUtil.encrypt(letter.getLetterId());
