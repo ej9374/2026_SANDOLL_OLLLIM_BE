@@ -1,5 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.cache;
 
+import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.TimeToLive;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -35,7 +37,7 @@ public class CachedLetter implements Serializable {
     private String recommendedVoiceFonts;
 
     private Long templateId;
-    private String bgmUrl;
+    private BgmsResponse.BgmDto bgmDto;
 
     @Builder.Default
     private List<CachedWord> words = new ArrayList<>();
@@ -69,8 +71,8 @@ public class CachedLetter implements Serializable {
         this.templateId = templateId;
     }
 
-    public void setBgmUrl(String bgmUrl) {
-        this.bgmUrl = bgmUrl;
+    public void setBgmDto(BgmsResponse.BgmDto bgmDto) {
+        this.bgmDto = bgmDto;
     }
 
 }
