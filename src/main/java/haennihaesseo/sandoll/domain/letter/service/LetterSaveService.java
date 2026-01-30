@@ -59,11 +59,10 @@ public class LetterSaveService {
      * 캐시의 편지 조회해서 저장 로직
      * @param userId
      * @param letterKey
-     * @param password
      * @return
      */
     @Transactional
-    public SecretLetterKeyResponse saveLetterAndLink(Long userId, String letterKey, String password){
+    public SecretLetterKeyResponse saveLetterAndLink(Long userId, String letterKey){
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterKey)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
@@ -101,7 +100,6 @@ public class LetterSaveService {
                 .title(cachedLetter.getTitle())
                 .content(cachedLetter.getContent())
                 .sender(user)
-                .password(password != null ? passwordEncoder.encode(password) : "")
                 .font(font)
                 .template(template)
                 .bgm(bgm)
@@ -128,6 +126,26 @@ public class LetterSaveService {
             log.warn("공유키 암호화 중 예외 발생: letterId = {}", letter.getLetterId(), e);
             throw new LetterException(LetterErrorStatus.LETTER_ENCRYPT_FAILED);
         }
+    }
+
+    /**
+     * 저장된 편지에 비밀번호 설정
+     * @param userId
+     * @param secretLetterKey
+     * @param password
+     */
+    @Transactional
+    public void updateLetterPasswordBySecretLetterKey(Long userId, String secretLetterKey, String password) {
+        Long letterId = aesUtil.decrypt(secretLetterKey);
+
+        Letter letter = letterRepository.findById(letterId)
+                .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
+
+        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId)) {
+            throw new LetterException(LetterErrorStatus.NOT_LETTER_OWNER);
+        }
+        letter.setPassword(passwordEncoder.encode(password));
+        letterRepository.save(letter);
     }
 
 }

@@ -1,6 +1,6 @@
 package haennihaesseo.sandoll.domain.letter.controller;
 
-import haennihaesseo.sandoll.domain.letter.dto.request.LetterSaveRequest;
+import haennihaesseo.sandoll.domain.letter.dto.request.LetterPasswordRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.SecretLetterKeyResponse;
 import haennihaesseo.sandoll.domain.letter.service.LetterSaveService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
@@ -27,12 +27,21 @@ public class LetterSaveController {
     @PostMapping("/share")
     public ResponseEntity<ApiResponse<SecretLetterKeyResponse>> saveLetter(
             @AuthenticationPrincipal UserPrincipal userPrincipal,
-            @RequestHeader("letterId") String letterId,
-            @RequestBody LetterSaveRequest request
+            @RequestHeader("letterId") String letterId
     ){
         Long userId = userPrincipal.getUser().getUserId();
-        SecretLetterKeyResponse response = letterSaveService.saveLetterAndLink(userId, letterId, request.getPassword());
+        SecretLetterKeyResponse response = letterSaveService.saveLetterAndLink(userId, letterId);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_501, response);
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<ApiResponse<Void>> updatePassword(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody LetterPasswordRequest letterPasswordRequest
+    ){
+        Long userId = userPrincipal.getUser().getUserId();
+        letterSaveService.updateLetterPasswordBySecretLetterKey(userId, letterPasswordRequest.getSecretLetterKey(), letterPasswordRequest.getPassword());
+        return ApiResponse.success(LetterSuccessStatus.SUCCESS_502);
     }
 
 }
