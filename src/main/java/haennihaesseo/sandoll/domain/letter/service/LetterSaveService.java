@@ -40,6 +40,13 @@ public class LetterSaveService {
     private final LetterRepository letterRepository;
     private final AESUtil aesUtil;
 
+    /**
+     * 캐시의 편지 조회해서 저장 로직
+     * @param userId
+     * @param letterKey
+     * @param password
+     * @return
+     */
     public SecretLetterKeyResponse saveLetterAndLink(Long userId, String letterKey, String password){
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterKey)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
