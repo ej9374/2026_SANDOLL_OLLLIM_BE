@@ -43,7 +43,7 @@ public class LetterVoiceService {
     List<Font> recommendedFonts = fontRepository.findByNameIn(pythonResponse.getRecommendedFonts());
 
     // 추천 폰트 이름으로 캐쉬에 저장
-    cachedLetter.setRecommendedVoiceFonts(recommendedFonts);
+    cachedLetter.setVoiceFonts(recommendedFonts, pythonResponse.getVoiceKeywords());
     cachedLetterRepository.save(cachedLetter);
 
     return letterConverter.toVoiceAnalysisResponse(pythonResponse.getAnalysisResult(), recommendedFonts);

@@ -1,7 +1,9 @@
 package haennihaesseo.sandoll.domain.font.controller;
 
 import haennihaesseo.sandoll.domain.font.dto.request.FontSettingRequest;
+import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
 import haennihaesseo.sandoll.domain.font.service.FontService;
+import haennihaesseo.sandoll.domain.font.status.FontSuccessStatus;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,11 +12,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 
 @Tag(name = "Font Setting", description = "폰트 설정 및 추천 API")
 @RestController
@@ -34,7 +39,19 @@ public class FontController {
       @RequestBody @Valid FontSettingRequest request
   ) {
     fontService.applyFont(letterId, request.getFontId());
-    return ApiResponse.success(LetterSuccessStatus.SUCCESS_304);
+    return ApiResponse.success(FontSuccessStatus.SUCCESS_304);
+  }
+
+  @Operation(
+      summary = "[3.6] 추천 폰트 리스트 조회"
+  )
+  @GetMapping("/font")
+  public ResponseEntity<ApiResponse<RecommendFontResponse>> getRecommendFont(
+      @RequestHeader("letterId") String letterId,
+      @RequestParam(value = "source", defaultValue = "VOICE") FontType type
+  ) {
+    RecommendFontResponse response = fontService.getRecommendFonts(letterId, type);
+    return ApiResponse.success(FontSuccessStatus.SUCCESS_306, response);
   }
 
 }

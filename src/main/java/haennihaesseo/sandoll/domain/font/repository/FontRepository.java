@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FontRepository extends JpaRepository<Font, Long> {
   List<Font> findByNameIn(List<String> names);
+  List<Font> findAllByFontIdIn(List<Long> fontIds);
 }

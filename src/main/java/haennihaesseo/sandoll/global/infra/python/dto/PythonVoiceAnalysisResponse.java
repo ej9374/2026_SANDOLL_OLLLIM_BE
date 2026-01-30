@@ -15,4 +15,5 @@ public class PythonVoiceAnalysisResponse {
 
     private String analysisResult;
     private List<String> recommendedFonts;
+    private List<String> voiceKeywords;
 }

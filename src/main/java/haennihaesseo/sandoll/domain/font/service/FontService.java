@@ -1,7 +1,9 @@
 package haennihaesseo.sandoll.domain.font.service;
 
 import haennihaesseo.sandoll.domain.deco.entity.enums.Size;
+import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
 import haennihaesseo.sandoll.domain.font.entity.Font;
+import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 import haennihaesseo.sandoll.domain.font.exception.FontException;
 import haennihaesseo.sandoll.domain.font.repository.FontRepository;
 import haennihaesseo.sandoll.domain.font.status.FontErrorStatus;
@@ -10,6 +12,8 @@ import haennihaesseo.sandoll.domain.letter.cache.CachedLetterRepository;
 import haennihaesseo.sandoll.domain.letter.dto.response.WritingLetterContentResponse;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,4 +64,40 @@ public class FontService {
     cachedLetterRepository.save(cachedLetter);
   }
 
+  public RecommendFontResponse getRecommendFonts(String letterId, FontType type) {
+    // Redis에서 CachedLetter 조회
+    CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
+        .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
+
+    if (type.equals(FontType.CONTEXT)) {
+      //TODO: 문맥 분석 기반 폰트 추천 구현
+      return null;
+    } else {
+      String voiceRecommendFontIds = cachedLetter.getVoiceFontIds();
+      List<Long> fontIds =
+          voiceRecommendFontIds == null || voiceRecommendFontIds.isEmpty() ? List.of()
+              : Arrays.stream(voiceRecommendFontIds.split(","))
+                  .map(Long::parseLong)
+                  .toList();
+      String fontKeywords = cachedLetter.getVoiceFontKeywords();
+      List<String> keywords = fontKeywords == null || fontKeywords.isEmpty() ? List.of()
+          : Arrays.stream(fontKeywords.split(","))
+              .toList();
+
+      List<RecommendFontResponse.WritingRecommendFont> fonts = fontRepository.findAllByFontIdIn(
+              fontIds).stream()
+          .map(font -> RecommendFontResponse.WritingRecommendFont.builder()
+              .fontId(font.getFontId())
+              .name(font.getName())
+              .fontUrl(font.getFontUrl())
+              .keywords(keywords)
+              .build())
+          .toList();
+
+      return RecommendFontResponse.builder()
+          .type(FontType.VOICE)
+          .fonts(fonts)
+          .build();
+    }
+  }
 }
