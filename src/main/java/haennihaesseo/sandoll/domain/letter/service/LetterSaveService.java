@@ -31,6 +31,7 @@ import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,7 @@ public class LetterSaveService {
     private final BgmRepository bgmRepository;
     private final WordRepository wordRepository;
     private final AESUtil aesUtil;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 캐시의 편지 조회해서 저장 로직
@@ -86,9 +88,9 @@ public class LetterSaveService {
         Bgm bgm = null;
         if (bgmDto != null) {
             bgm = Bgm.builder()
-                    .bgmId(cachedLetter.getBgmDto().bgmId())
                     .name(cachedLetter.getBgmDto().name())
                     .keyword(String.join(",", cachedLetter.getBgmDto().keyword()))
+                    .bgmUrl(cachedLetter.getBgmDto().bgmUrl())
                     .build();
             bgmRepository.save(bgm);
         }
@@ -99,7 +101,7 @@ public class LetterSaveService {
                 .title(cachedLetter.getTitle())
                 .content(cachedLetter.getContent())
                 .sender(user)
-                .password(password != null ? password : "")
+                .password(password != null ? passwordEncoder.encode(password) : "")
                 .font(font)
                 .template(template)
                 .bgm(bgm)
