@@ -3,6 +3,7 @@ package haennihaesseo.sandoll.domain.letter.service;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetterRepository;
 import haennihaesseo.sandoll.domain.letter.cache.CachedWord;
+import haennihaesseo.sandoll.domain.letter.converter.LetterConverter;
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
@@ -17,6 +18,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -27,6 +29,7 @@ public class LetterService {
   private final AwsS3Client s3Client;
   private final GoogleSttClient googleSttClient;
   private final CachedLetterRepository cachedLetterRepository;
+  private final LetterConverter letterConverter;
 
   /**
    * 음성 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급
@@ -46,35 +49,14 @@ public class LetterService {
     // 2. S3 업로드
     String fileUrl = s3Client.uploadFile("voice", file);
 
-    // 3. CachedWord 변환
-    List<CachedWord> cachedWords = sttResult.getWords().stream()
-        .map(w -> CachedWord.builder()
-            .word(w.getWord())
-            .startTime(w.getStartTime())
-            .endTime(w.getEndTime())
-            .wordOrder((double) w.getOrder())
-            .build())
-        .toList();
-
-    // 4. Redis 저장
+    // 3. Redis 저장
     String letterId = UUID.randomUUID().toString();
-    CachedLetter cachedLetter = CachedLetter.builder()
-        .letterId(letterId)
-        .voiceUrl(fileUrl)
-        .duration(sttResult.getTotalDuration().intValue())
-        .content(sttResult.getFullText())
-        .words(cachedWords)
-        .build();
-
+    List<CachedWord> cachedWords = letterConverter.toCachedWords(sttResult);
+    CachedLetter cachedLetter = letterConverter.toCachedLetter(letterId, fileUrl, sttResult, cachedWords);
     cachedLetterRepository.save(cachedLetter);
 
-    // 5. 응답 반환
-    return VoiceSaveResponse.builder()
-        .letterId(letterId)
-        .voiceUrl(fileUrl)
-        .duration(sttResult.getTotalDuration().intValue())
-        .content(sttResult.getFullText())
-        .build();
+    // 4. 응답 반환
+    return letterConverter.toVoiceSaveResponse(letterId, fileUrl, sttResult);
   }
 
   /**
@@ -82,6 +64,7 @@ public class LetterService {
    * @param letterId
    * @param request
    */
+  @Transactional
   public void inputLetterInfo(String letterId, LetterInfoRequest request) {
     // Redis에서 CachedLetter 조회
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
@@ -103,6 +86,7 @@ public class LetterService {
     // Redis에 저장
     cachedLetterRepository.save(cachedLetter);
   }
+
 
   private List<CachedWord> updateWords(List<CachedWord> existingWords, String oldContent, String newContent) {
     List<String> oldWords = Arrays.asList(oldContent.trim().split("\\s+"));

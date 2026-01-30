@@ -1,0 +1,40 @@
+package haennihaesseo.sandoll.domain.font.controller;
+
+import haennihaesseo.sandoll.domain.font.dto.request.FontSettingRequest;
+import haennihaesseo.sandoll.domain.font.service.FontService;
+import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
+import haennihaesseo.sandoll.global.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = "Font Setting", description = "폰트 설정 및 추천 API")
+@RestController
+@RequestMapping("/api/letter")
+@RequiredArgsConstructor
+@Slf4j
+public class FontController {
+
+  private final FontService fontService;
+
+  @Operation(
+      summary = "[3.4] 목소리 분석 폰트 적용 / [3.7] 폰트 적용"
+  )
+  @PostMapping("/font")
+  public ResponseEntity<ApiResponse<Void>> applyFont(
+      @RequestHeader("letterId") String letterId,
+      @RequestBody @Valid FontSettingRequest request
+  ) {
+    fontService.applyFont(letterId, request.getFontId());
+    return ApiResponse.success(LetterSuccessStatus.SUCCESS_304);
+  }
+
+}
