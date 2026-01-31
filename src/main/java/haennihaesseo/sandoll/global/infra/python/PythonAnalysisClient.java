@@ -1,13 +1,18 @@
 package haennihaesseo.sandoll.global.infra.python;
 
+import haennihaesseo.sandoll.global.infra.python.dto.BgmStepEvent;
+import haennihaesseo.sandoll.global.infra.python.dto.ContextAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisResponse;
 import java.time.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
 @Slf4j
 @Component
@@ -38,4 +43,20 @@ public class PythonAnalysisClient {
 
         return response;
     }
+
+    public Flux<BgmStepEvent> requestContextAnalysis(ContextAnalysisRequest request){
+        log.info("[Python] 분석 요청 - content: {}", request.getContent());
+
+        webClient.post()
+                .uri("/api/bgm")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(request)
+                .retrieve()
+                .bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<BgmStepEvent>>() {})
+                .mapNotNull(ServerSentEvent::data)
+                .doOnNext(event -> {
+                    log.info("[Python] step: {}", event.getStep());
+                });
+    }
+
 }
