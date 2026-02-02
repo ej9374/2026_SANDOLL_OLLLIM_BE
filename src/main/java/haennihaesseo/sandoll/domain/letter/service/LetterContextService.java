@@ -15,6 +15,7 @@ import haennihaesseo.sandoll.global.infra.python.dto.ContextAnalysisRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class LetterContextService {
 
         // todo error 코드 추가 예정
         pythonAnalysisClient.requestContextAnalysis(request)
+                .publishOn(Schedulers.boundedElastic())
                 .subscribe(event -> {
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
