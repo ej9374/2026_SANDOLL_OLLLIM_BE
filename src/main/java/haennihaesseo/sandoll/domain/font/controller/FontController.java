@@ -54,7 +54,7 @@ public class FontController {
   @Operation(
       summary = "[3.9] 보이스 폰트 리스트 새로고침"
   )
-  @GetMapping("/font/refresh")
+  @PostMapping("/font/refresh")
   public ResponseEntity<ApiResponse<RefreshFontResponse>> refreshRecommendFont(
       @RequestHeader("letterId") String letterId
   ) {
