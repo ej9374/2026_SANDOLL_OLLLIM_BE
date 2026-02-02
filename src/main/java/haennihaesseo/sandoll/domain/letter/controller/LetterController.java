@@ -5,6 +5,7 @@ import haennihaesseo.sandoll.domain.letter.dto.request.LetterInfoRequest;
 import haennihaesseo.sandoll.domain.letter.dto.response.WritingLetterContentResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceAnalysisResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.VoiceSaveResponse;
+import haennihaesseo.sandoll.domain.letter.service.LetterContextService;
 import haennihaesseo.sandoll.domain.letter.service.LetterService;
 import haennihaesseo.sandoll.domain.letter.service.LetterVoiceService;
 import haennihaesseo.sandoll.domain.letter.status.LetterSuccessStatus;
@@ -35,6 +36,7 @@ public class LetterController {
   private final LetterService letterService;
   private final LetterVoiceService letterVoiceService;
   private final BgmService bgmService;
+  private final LetterContextService letterContextService;
 
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
@@ -65,13 +67,15 @@ public class LetterController {
   public ResponseEntity<ApiResponse<VoiceAnalysisResponse>> analyzeVoice(
       @RequestHeader("letterId") String letterId
   ) {
-    bgmService.createBgmsByLetter(letterId);
+    letterContextService.contextAnalyze(letterId);
     VoiceAnalysisResponse response = letterVoiceService.analyzeVoice(letterId);
-    //TODO : 문맥 분석
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_303, response);
   }
 
 
+  @Operation(
+          summary = "[3.5] 전체 편지 내용 조회"
+  )
   @GetMapping("/content")
   public ResponseEntity<ApiResponse<WritingLetterContentResponse>> getWritingLetterContent(
       @RequestHeader("letterId") String letterId

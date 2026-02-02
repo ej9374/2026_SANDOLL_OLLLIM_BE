@@ -1,5 +1,7 @@
 package haennihaesseo.sandoll.domain.letter.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
 import haennihaesseo.sandoll.domain.font.entity.Font;
 import haennihaesseo.sandoll.domain.letter.cache.CachedLetter;
 import haennihaesseo.sandoll.domain.letter.cache.CachedWord;
@@ -10,6 +12,8 @@ import haennihaesseo.sandoll.domain.letter.dto.response.LetterDetailResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.WritingLetterContentResponse;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.stt.SttResult;
+
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -100,5 +104,22 @@ public class LetterConverter {
         .templateUrl(cachedLetter.getTemplateUrl())
         .words(wordInfos)
         .build();
+  }
+
+  public List<BgmsResponse.BgmDto> toBgmDtos(JsonNode bgms){
+    List<BgmsResponse.BgmDto> bgmDtos = new ArrayList<>();
+    for (JsonNode bgm : bgms) {
+      List<String> keywords = new ArrayList<>();
+      for (JsonNode keyword : bgm.get("keyword")) {
+        keywords.add(keyword.asText());
+      }
+      bgmDtos.add(BgmsResponse.BgmDto.builder()
+              .bgmId(bgm.get("bgmId").asLong())
+              .bgmUrl(bgm.get("bgmUrl").asText())
+              .name(bgm.get("name").asText())
+              .keyword(keywords)
+              .build());
+    }
+    return bgmDtos;
   }
 }

@@ -57,7 +57,7 @@ public class FontService {
     String content = cachedLetter.getContent();
     for (char c : content.toCharArray()) {
       if (c == '\n') {
-        charCount += 10;
+        charCount += 20;
       } else {
         charCount += 1;
       }

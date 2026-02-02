@@ -16,16 +16,16 @@ public class BgmController {
 
     private final BgmService bgmService;
 
-    @Operation(
-            summary = "[4.3] 백엔드에서 테스트시만 사용"
-    )
-    @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createBgms(
-            @RequestHeader(name = "letterId") String letterId
-    ) {
-        bgmService.createBgmsByLetter(letterId);
-        return ApiResponse.success(DecoSuccessStatus.SUCCESS_403);
-    }
+//    @Operation(
+//            summary = "[4.3] 백엔드에서 테스트시만 사용"
+//    )
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<Void>> createBgms(
+//            @RequestHeader(name = "letterId") String letterId
+//    ) {
+//        bgmService.createBgmsByLetter(letterId);
+//        return ApiResponse.success(DecoSuccessStatus.SUCCESS_403);
+//    }
 
     @Operation(
             summary = "[4.4] 생성된 Bgm 조회"

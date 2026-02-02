@@ -2,6 +2,7 @@ package haennihaesseo.sandoll.domain.deco.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import haennihaesseo.sandoll.domain.deco.converter.DecoConverter;
 import haennihaesseo.sandoll.domain.deco.dto.response.BgmsResponse;
@@ -30,38 +31,48 @@ public class BgmService {
     private final ObjectMapper objectMapper;
     private final CachedLetterRepository cachedLetterRepository;
 
-    /**
-     * bgm 생성 api와 통신
-     * @param letterId
-     */
-    public void createBgmsByLetter(String letterId) {
-        // todo bgm 생성 api로 통신 요청 (비동기 처리 예정)
-        List<BgmsResponse.BgmDto> bgmList = List.of(
-                BgmsResponse.BgmDto.builder()
-                        .bgmId(1L)
-                        .bgmUrl("https://cdn.sandoll.com/audio/spring-breeze.mp3")
-                        .keyword(List.of("차분한", "봄", "어쿠스틱"))
-                        .name("봄바람의 속삭임")
-                        .build(),
-                BgmsResponse.BgmDto.builder()
-                        .bgmId(2L)
-                        .bgmUrl("https://cdn.sandoll.com/audio/lofi-study.mp3")
-                        .keyword(List.of("집중", "Lo-fi", "비트"))
-                        .name("한밤중의 도서관")
-                        .build(),
-                BgmsResponse.BgmDto.builder()
-                        .bgmId(3L)
-                        .bgmUrl("https://cdn.sandoll.com/audio/summer-ocean.mp3")
-                        .keyword(List.of("시원한", "바다", "활기찬"))
-                        .name("파도 소리 서핑")
-                        .build()
-        );
+//    /**
+//     * bgm 생성 api와 통신
+//     * @param letterId
+//     */
+//    public void createBgmsByLetter(String letterId) {
+//        // todo bgm 생성 api로 통신 요청 (비동기 처리 예정)
+//        List<BgmsResponse.BgmDto> bgmList = List.of(
+//                BgmsResponse.BgmDto.builder()
+//                        .bgmId(1L)
+//                        .bgmUrl("https://cdn.sandoll.com/audio/spring-breeze.mp3")
+//                        .keyword(List.of("차분한", "봄", "어쿠스틱"))
+//                        .name("봄바람의 속삭임")
+//                        .build(),
+//                BgmsResponse.BgmDto.builder()
+//                        .bgmId(2L)
+//                        .bgmUrl("https://cdn.sandoll.com/audio/lofi-study.mp3")
+//                        .keyword(List.of("집중", "Lo-fi", "비트"))
+//                        .name("한밤중의 도서관")
+//                        .build(),
+//                BgmsResponse.BgmDto.builder()
+//                        .bgmId(3L)
+//                        .bgmUrl("https://cdn.sandoll.com/audio/summer-ocean.mp3")
+//                        .keyword(List.of("시원한", "바다", "활기찬"))
+//                        .name("파도 소리 서핑")
+//                        .build()
+//        );
+//
+//        try {
+//            saveBgmAtRedis(letterId, bgmList);
+//        } catch (JsonProcessingException e) {
+//            throw new GlobalException(ErrorStatus.JSON_PARSING_FAIL);
+//        }
+//    }
 
-        try {
-            saveBgmAtRedis(letterId, bgmList);
-        } catch (JsonProcessingException e) {
-            throw new GlobalException(ErrorStatus.JSON_PARSING_FAIL);
-        }
+    /**
+     * Bgm 생성 요청 이후 Redis에 bgms 저장
+     * @param letterId
+     * @param bgmDtos
+     * @throws JsonProcessingException
+     */
+    public void saveBgmsAtRedis(String letterId, List<BgmsResponse.BgmDto> bgmDtos) throws JsonProcessingException {
+        redisClient.setData("bgms", letterId, objectMapper.writeValueAsString(bgmDtos), 3600);
     }
 
     /**
@@ -76,7 +87,8 @@ public class BgmService {
             throw new DecoException(DecoErrorStatus.BGM_GENERATING);
         }
         try {
-            List<BgmsResponse.BgmDto> bgmDtos = objectMapper.readValue(jsonBgms, new TypeReference<List<BgmsResponse.BgmDto>>() {});
+            List<BgmsResponse.BgmDto> bgmDtos = objectMapper.readValue(jsonBgms, new TypeReference<List<BgmsResponse.BgmDto>>() {
+            });
             return BgmsResponse.builder().bgms(bgmDtos).build();
         } catch (JsonProcessingException e) {
             throw new GlobalException(ErrorStatus.JSON_PARSING_FAIL);
@@ -115,9 +127,5 @@ public class BgmService {
                 throw new GlobalException(ErrorStatus.JSON_PARSING_FAIL);
             }
         }
-    }
-
-    private void saveBgmAtRedis(String letterId, List<BgmsResponse.BgmDto> bgmDtos) throws JsonProcessingException {
-        redisClient.setData("bgms", letterId, objectMapper.writeValueAsString(bgmDtos), 3000);
     }
 }
