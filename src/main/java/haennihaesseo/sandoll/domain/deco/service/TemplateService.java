@@ -15,7 +15,6 @@ import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,14 +26,22 @@ public class TemplateService {
     private final TemplateRepository templateRepository;
     private final DecoConverter decoConverter;
     private final CachedLetterRepository cachedLetterRepository;
+    private final List<String> TEMPLATE_ORDER = List.of(
+            "무지",
+            "줄글",
+            "모눈",
+            "설날",
+            "생일A",
+            "생일B"
+    );
 
     /**
-     * DB의 전체 템플릿 조회
+     * 템플릿 목록 조회 (이름별 SMALL 사이즈 하나씩)
      * @return templates(templateId, name, previewImageUrl)
      */
     public TemplatesResponse getAllTemplates() {
-        List<Template> templates = templateRepository.findAll();
-        return decoConverter.toTemplatesResponse(templates);
+        List<Template> templates = templateRepository.findByNameInAndSize(TEMPLATE_ORDER, Size.SMALL);
+        return decoConverter.toTemplatesResponse(templates, TEMPLATE_ORDER);
     }
 
     /**
