@@ -57,8 +57,7 @@ public class SecurityConfig {
       "/api/letter/font",
       "/api/letter/content",
       "/api/letter/font/refresh",
-      "/api/letter/home",
-      "/api/user/logout"
+      "/api/letter/home"
   };
 
   private static final String[] ALLOWED_ORIGINS = {
