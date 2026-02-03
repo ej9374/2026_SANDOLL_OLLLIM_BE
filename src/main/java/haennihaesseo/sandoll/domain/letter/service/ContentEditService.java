@@ -72,7 +72,6 @@ public class ContentEditService {
     if (!normalizedOld.equals(normalizedNew)) {
       List<CachedWord> updatedWords = updateWords(
           cachedLetter.getWords(),
-          oldContent,
           newContent
       );
       cachedLetter.setWords(updatedWords);
@@ -114,7 +113,6 @@ public class ContentEditService {
    * 단어 업데이트 메인 로직
    */
   private List<CachedWord> updateWords(List<CachedWord> existingWords,
-      String oldContent,
       String newContent) {
     // 기존 단어 리스트
     List<String> oldWords = existingWords.stream()
@@ -122,11 +120,6 @@ public class ContentEditService {
         .collect(Collectors.toList());
 
     List<String> newWords = tokenizeContent(newContent);
-
-    log.debug("Old 단어 ({}개): {}", oldWords.size(),
-        oldWords.size() <= 20 ? oldWords : oldWords.subList(0, 20) + "...");
-    log.debug("New 단어 ({}개): {}", newWords.size(),
-        newWords.size() <= 20 ? newWords : newWords.subList(0, 20) + "...");
 
     // 단어 개수가 같으면 위치 기반
     if (oldWords.size() == newWords.size()) {
@@ -157,13 +150,8 @@ public class ContentEditService {
           .wordOrder(existing.getWordOrder())
           .build());
 
-      if (!oldWord.equals(newWord)) {
-        log.debug("위치 {} REPLACE: '{}' -> '{}' (startTime: {})",
-            i, oldWord, newWord, existing.getStartTime());
-      }
     }
 
-    log.info("위치 기반 업데이트 완료: {} 단어", updatedWords.size());
     return updatedWords;
   }
 
@@ -173,22 +161,12 @@ public class ContentEditService {
   private List<CachedWord> updateWordsByLCS(List<CachedWord> existingWords,
       List<String> oldWords,
       List<String> newWords) {
-    long startTime = System.currentTimeMillis();
 
     // 1. LCS 계산
     List<Edit> edits = computeDiff(oldWords, newWords);
 
     // 2. 유사도 기반 REPLACE 감지
     edits = detectReplacements(edits, oldWords, newWords);
-
-    long lcsTime = System.currentTimeMillis() - startTime;
-    log.debug("LCS 계산 완료: {}ms", lcsTime);
-
-    log.debug("최종 편집 내역 ({}개): {}", edits.size(),
-        edits.size() <= 20 ? edits.stream()
-            .map(e -> e.getType() + "(" + e.getWord() + ")")
-            .collect(Collectors.joining(", "))
-            : "...");
 
     // 3. Edit 적용
     List<CachedWord> updatedWords = new ArrayList<>();
@@ -213,10 +191,6 @@ public class ContentEditService {
               .build());
           nextOldIdx = edit.getOldIndex() + 1;
 
-          log.debug("REPLACE: '{}' -> '{}' (startTime: {})",
-              oldWords.get(edit.getOldIndex()),
-              edit.getWord(),
-              originalWord.getStartTime());
           break;
 
         case INSERT:
@@ -232,18 +206,13 @@ public class ContentEditService {
               .wordOrder(newOrder)
               .build());
 
-          log.debug("INSERT: '{}' (startTime: null)", edit.getWord());
           break;
 
         case DELETE:
           nextOldIdx = edit.getOldIndex() + 1;
-          log.debug("DELETE: '{}'", edit.getWord());
           break;
       }
     }
-
-    log.info("LCS 기반 업데이트 완료: {} -> {} 단어 ({}ms)",
-        existingWords.size(), updatedWords.size(), lcsTime);
 
     return updatedWords;
   }
@@ -328,17 +297,10 @@ public class ContentEditService {
           ));
           idx++;  // INSERT도 처리했으므로 건너뛰기
 
-          log.debug("REPLACE 감지: '{}' -> '{}' at pos {} (유사도: {:.1f}%)",
-              oldWord, newWord, deleteEdit.getOldIndex(), similarity * 100);
         } else {
           // 유사도 낮거나 위치 다르면 그대로
           optimized.add(current);
 
-          if (!samePosition) {
-            log.debug("위치 불일치: '{}' (pos {}) vs '{}' (pos {})",
-                oldWord, deleteEdit.getOldIndex(),
-                newWord, insertEdit.getNewIndex());
-          }
         }
       } else {
         optimized.add(current);
