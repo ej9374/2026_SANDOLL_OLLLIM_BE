@@ -71,4 +71,8 @@ public class TokenService {
         .build();
   }
 
+  public void logout(Long userId) {
+    redisClient.deleteData("REFRESH_TOKEN_", userId.toString());
+  }
+
 }

@@ -20,4 +20,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     List<Long> findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(@Param("userId") Long userId, @Param("letterStatus") LetterStatus letterStatus);
 
     boolean existsByLetterIdAndSenderUserId(Long letterId, Long userId);
+
+    Long countByLetterStatus(LetterStatus letterStatus);
 }
