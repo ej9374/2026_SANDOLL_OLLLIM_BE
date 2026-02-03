@@ -11,6 +11,7 @@ import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.repository.LetterRepository;
 import haennihaesseo.sandoll.domain.letter.repository.ReceiverLetterRepository;
+import haennihaesseo.sandoll.domain.user.entity.User;
 import haennihaesseo.sandoll.domain.user.repository.UserRepository;
 import haennihaesseo.sandoll.global.exception.GlobalException;
 import haennihaesseo.sandoll.global.status.ErrorStatus;
@@ -110,5 +111,22 @@ public class LetterBoxService {
             );
         }
         return results;
+    }
+
+    public HomeResponse getHomeLetterCount(Long userId) {
+        Long count;
+        if(userId == null) {
+            // 생성된 전체 편지 개수 조회
+            count = letterRepository.count();
+        } else {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
+
+            count = receiverLetterRepository.countByIdReceiverId(userId);
+        }
+
+        return HomeResponse.builder()
+            .count(count)
+            .build();
     }
 }

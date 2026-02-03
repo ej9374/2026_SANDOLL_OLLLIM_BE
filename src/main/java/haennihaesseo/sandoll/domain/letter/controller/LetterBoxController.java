@@ -1,6 +1,7 @@
 package haennihaesseo.sandoll.domain.letter.controller;
 
 import haennihaesseo.sandoll.domain.letter.dto.request.LetterDeleteRequest;
+import haennihaesseo.sandoll.domain.letter.dto.response.HomeResponse;
 import haennihaesseo.sandoll.domain.letter.dto.response.LetterDetailResponse;
 import haennihaesseo.sandoll.domain.letter.dto.request.OrderStatus;
 import haennihaesseo.sandoll.domain.letter.dto.response.ReceiveLetterResponse;
@@ -85,5 +86,17 @@ public class LetterBoxController {
         Long userId = userPrincipal.getUser().getUserId();
         List<SendLetterResponse> responses = letterBoxService.getSentLettersByUser(userId, orderStatus);
         return ApiResponse.success(LetterSuccessStatus.SUCCESS_204, responses);
+    }
+
+    @Operation(
+        summary = "[7.1] 홈 화면에서 편지 개수 조회"
+    )
+    @GetMapping("/home")
+    public ResponseEntity<ApiResponse<HomeResponse>> getHomeCount(
+        @AuthenticationPrincipal UserPrincipal userPrincipal
+    ){
+        Long userId = userPrincipal == null ? null : userPrincipal.getUser().getUserId();
+        HomeResponse response = letterBoxService.getHomeLetterCount(userId);
+        return ApiResponse.success(LetterSuccessStatus.SUCCESS_701, response);
     }
 }

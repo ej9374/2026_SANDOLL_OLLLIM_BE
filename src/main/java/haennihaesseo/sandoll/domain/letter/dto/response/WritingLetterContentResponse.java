@@ -13,6 +13,7 @@ public class WritingLetterContentResponse {
   private int duration;
   private Long fontId;
   private String fontName;
+  private String fontUrl;
   private String content;
   private String title;
   private String sender;
