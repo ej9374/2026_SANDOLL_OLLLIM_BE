@@ -25,6 +25,27 @@ public class DecoConverter {
                 .build();
     }
 
+    public TemplatesResponse toTemplatesResponse(List<Template> templates, List<String> order) {
+        // 이름 -> Template 매핑
+        java.util.Map<String, Template> templateMap = templates.stream()
+                .collect(java.util.stream.Collectors.toMap(Template::getName, t -> t));
+
+        // 순서에 맞게 정렬
+        List<TemplatesResponse.TemplateDto> temps = order.stream()
+                .filter(templateMap::containsKey)
+                .map(templateMap::get)
+                .map(t -> TemplatesResponse.TemplateDto.builder()
+                        .templateId(t.getTemplateId())
+                        .name(t.getName())
+                        .previewImageUrl(t.getPreviewImageUrl())
+                        .build())
+                .toList();
+
+        return TemplatesResponse.builder()
+                .templates(temps)
+                .build();
+    }
+
     public List<BgmsResponse.BgmDto> toBgmDto(List<Bgm> bgms) {
         return bgms.stream()
                 .map(b -> BgmsResponse.BgmDto.builder()
