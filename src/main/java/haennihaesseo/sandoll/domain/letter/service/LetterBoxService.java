@@ -40,21 +40,18 @@ public class LetterBoxService {
                 ? receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtDesc(userId)
                 : receiverLetterRepository.findIdLetterIdByIdReceiverIdOrderByCreatedAtAsc(userId);
 
-        List<ReceiveLetterResponse> results = new ArrayList<>();
+        List<Letter> letters = letterRepository.findByLetterIdIn(letterIds);
+        if (letters.size() != letterIds.size())
+            throw new LetterException(LetterErrorStatus.LETTER_NOT_FOUND);
 
-        for (Long letterId : letterIds) {
-            Letter letter = letterRepository.findById(letterId)
-                    .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-            results.add(
-                    ReceiveLetterResponse.builder()
-                            .letterId(letterId)
-                            .sender(letter.getSenderName())
-                            .createdAt(letter.getCreatedAt().toLocalDate())
-                            .build()
-            );
-        }
-        return results;
+        return letters.stream()
+                .map(l -> ReceiveLetterResponse.builder()
+                        .letterId(l.getLetterId())
+                        .sender(l.getSenderName())
+                        .createdAt(l.getCreatedAt().toLocalDate())
+                        .build()
+                )
+                .toList();
     }
 
     public LetterDetailResponse getLetterDetailsByLetter(Long userId, Long letterId) {
@@ -90,25 +87,22 @@ public class LetterBoxService {
 
         userRepository.findById(userId).orElseThrow(() -> new GlobalException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Long> letterIds = (status.equals(OrderStatus.EARLIEST))
+        List<Long> letterIds = (status.equals(OrderStatus.LATEST))
                 ? letterRepository.findIdLetterIdBySenderUserIdOrderByCreatedAtDesc(userId, LetterStatus.VISIBLE)
                 : letterRepository.findIdLetterIdBySenderUserIdOrderByCreatedAtAsc(userId, LetterStatus.VISIBLE);
 
-        List<SendLetterResponse> results = new ArrayList<>();
+        List<Letter> letters = letterRepository.findByLetterIdIn(letterIds);
+        if (letters.size() != letterIds.size())
+            throw new LetterException(LetterErrorStatus.LETTER_NOT_FOUND);
 
-        for (Long letterId : letterIds) {
-            Letter letter = letterRepository.findById(letterId)
-                    .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
-
-            results.add(
-                    SendLetterResponse.builder()
-                            .letterId(letterId)
-                            .title(letter.getTitle())
-                            .createdAt(letter.getCreatedAt().toLocalDate())
-                            .build()
-            );
-        }
-        return results;
+        return letters.stream()
+                .map(l -> SendLetterResponse.builder()
+                        .letterId(l.getLetterId())
+                        .title(l.getTitle())
+                        .createdAt(l.getCreatedAt().toLocalDate())
+                        .build()
+                )
+                .toList();
     }
 
     public HomeResponse getHomeLetterCount(Long userId) {
