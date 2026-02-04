@@ -48,7 +48,7 @@ public class CustomOAuth2AuthorizationRequestResolver implements OAuth2Authoriza
     String originalState = authorizationRequest.getState();
     String encodedRedirect = Base64.getUrlEncoder().withoutPadding()
         .encodeToString(redirect.getBytes(StandardCharsets.UTF_8));
-    String customState = originalState + "_" + encodedRedirect;
+    String customState = originalState + "." + encodedRedirect;
 
     return OAuth2AuthorizationRequest.from(authorizationRequest)
         .state(customState)

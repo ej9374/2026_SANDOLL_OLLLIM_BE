@@ -107,11 +107,11 @@ public class OAuthLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHand
 
   private String extractRedirectPath(HttpServletRequest request) {
     String state = request.getParameter("state");
-    if (state == null || !state.contains("_")) {
+    if (state == null || !state.contains(".")) {
       return null;
     }
 
-    int separatorIndex = state.lastIndexOf("_");
+    int separatorIndex = state.lastIndexOf(".");
     String encodedRedirect = state.substring(separatorIndex + 1);
 
     try {
