@@ -16,7 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "letters")
+@Table(
+        name = "letters",
+        indexes = {
+                @Index(name = "idx_sender_id_and_letter_status", columnList = "sender_id,letter_status")
+        })
 public class Letter {
 
     @Id
@@ -53,7 +57,7 @@ public class Letter {
     private String password;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bgmId", nullable = true)
+    @JoinColumn(name = "bgm_id", nullable = true)
     private Bgm bgm;
 
     @Builder.Default
