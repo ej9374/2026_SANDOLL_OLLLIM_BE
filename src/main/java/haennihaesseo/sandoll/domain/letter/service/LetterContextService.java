@@ -38,9 +38,8 @@ public class LetterContextService {
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        ContextAnalysisRequest request = new ContextAnalysisRequest(cachedLetter.getContent(), 3); // todo count=3 수정예정
+        ContextAnalysisRequest request = new ContextAnalysisRequest(cachedLetter.getContent(), 3);
 
-        // todo error 코드 추가 예정
         pythonAnalysisClient.requestContextAnalysis(request)
                 .publishOn(Schedulers.boundedElastic())
                 .doOnNext(event -> {

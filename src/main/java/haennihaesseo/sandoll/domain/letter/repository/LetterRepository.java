@@ -20,8 +20,6 @@ public interface LetterRepository extends JpaRepository<Letter, Long> {
     @Query("select l from Letter l join fetch l.font join fetch l.template join fetch l.voice left join fetch l.bgm where l.letterId = :letterId")
     Optional<Letter> findWithAllDetails(@Param("letterId") Long letterId);
 
-    List<Letter> findByLetterIdIn(List<Long> letterIds);
-
     @Modifying
     @Query("update Letter l set l.letterStatus = :letterStatus where l.sender.userId = :userId and l.letterId in :letterIds")
     int updateLetterStatusBySenderUserIdAndLetterIdIn(@Param("letterStatus") LetterStatus letterStatus, @Param("userId") Long userId, @Param("letterIds") List<Long> letterIds);

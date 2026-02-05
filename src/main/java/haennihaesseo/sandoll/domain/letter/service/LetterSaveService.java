@@ -23,6 +23,7 @@ import haennihaesseo.sandoll.domain.letter.entity.Word;
 import haennihaesseo.sandoll.domain.letter.exception.LetterException;
 import haennihaesseo.sandoll.domain.letter.repository.LetterRepository;
 import haennihaesseo.sandoll.domain.letter.repository.VoiceRepository;
+import haennihaesseo.sandoll.domain.letter.repository.WordBulkRepository;
 import haennihaesseo.sandoll.domain.letter.repository.WordRepository;
 import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.domain.letter.util.AESUtil;
@@ -59,6 +60,7 @@ public class LetterSaveService {
     private final PasswordEncoder passwordEncoder;
     private final LetterDetailService letterDetailService;
     private final RedisClient redisClient;
+    private final WordBulkRepository wordBulkRepository;
 
     /**
      * 캐시의 편지 조회해서 저장 로직
@@ -113,9 +115,8 @@ public class LetterSaveService {
                 .build();
         letterRepository.save(letter);
 
-        // todo 성능 위해 추후 리팩토링 예정
-        // word 저장
-        cachedLetter.getWords().stream()
+        // 단어 한 번에 저장
+        List<Word> words = cachedLetter.getWords().stream()
                 .sorted(Comparator.comparing(CachedWord::getWordOrder))
                 .map(w -> Word.builder()
                         .word(w.getWord())
@@ -123,7 +124,9 @@ public class LetterSaveService {
                         .endTime(w.getEndTime())
                         .letter(letter)
                         .build())
-                .forEach(wordRepository::save);
+                .toList();
+
+        wordBulkRepository.batchInsert(words);
 
         try{
             String secretLetterKey = aesUtil.encrypt(letter.getLetterId());
