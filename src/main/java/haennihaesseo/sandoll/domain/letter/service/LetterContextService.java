@@ -54,7 +54,6 @@ public class LetterContextService {
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
                         JsonNode analysis = event.getData().get("analysis");
-                        // 바탕으로 폰트 추천 알고리즘 구축 FontRecommendService 및 캐시에 저장
                         fontContextRecommendService.saveContextFontsInLetter(letterId, analysis);
                         log.info("[폰트 추천 저장] letterId = {}", letterId);
                     } else if ("done".equals(event.getStep())) {

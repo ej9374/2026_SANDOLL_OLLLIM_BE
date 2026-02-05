@@ -1,5 +1,7 @@
 package haennihaesseo.sandoll.global.infra.python;
 
+import haennihaesseo.sandoll.domain.letter.exception.LetterException;
+import haennihaesseo.sandoll.domain.letter.status.LetterErrorStatus;
 import haennihaesseo.sandoll.global.infra.python.dto.BgmStepEvent;
 import haennihaesseo.sandoll.global.infra.python.dto.ContextAnalysisRequest;
 import haennihaesseo.sandoll.global.infra.python.dto.PythonVoiceAnalysisRequest;
@@ -54,10 +56,23 @@ public class PythonAnalysisClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
-                // todo 4xx, 5xx 에러시 에러코드 추가 예정
+                .onStatus(
+                        HttpStatusCode::is4xxClientError,
+                        res -> res.createException().flatMap(e -> {
+                            log.error("AI 모델 요청 오류: {}", e.getMessage());
+                            return Mono.error(new LetterException(LetterErrorStatus.LETTER_ANALYSIS_BAD_REQUEST));
+                        })
+                )
+                .onStatus(
+                        HttpStatusCode::is5xxServerError,
+                        res -> res.createException().flatMap(e -> {
+                            log.error("AI 모델 서버 오류: {}", e.getMessage());
+                            return Mono.error(new LetterException(LetterErrorStatus.LETTER_ANALYSIS_MODEL_ERROR));
+                        })
+                )
                 .bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<BgmStepEvent>>() {})
                 .mapNotNull(ServerSentEvent::data)
-                .timeout(Duration.ofMinutes(3)) // todo 3분 타임어택 걸어두었으나 추후 수정 예정
+                .timeout(Duration.ofMinutes(5)) // timeout 5분으로 설정
                 .doOnNext(event -> {
                     log.info("[Python] step: {}", event.getStep());
                 })

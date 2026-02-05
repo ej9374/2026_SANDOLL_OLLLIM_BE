@@ -24,7 +24,10 @@ public enum LetterErrorStatus implements BaseErrorStatus {
 
     CANNOT_SAVE_OWN_LETTER(HttpStatus.BAD_REQUEST, "CANNOT_SAVE_OWN_LETTER", "자신의 편지는 보관함에 저장할 수 없습니다."),
     ALREADY_SAVE_LETTER(HttpStatus.BAD_REQUEST, "ALREADY_SAVE_LETTER", "이미 보관함에 저장한 편지입니다."),
-    LETTER_ANALYSIS_FAILED(HttpStatus.BAD_REQUEST, "LETTER_ANALYSIS_FAILED", "편지 분석에 실패했습니다.")
+    LETTER_ANALYSIS_FAILED(HttpStatus.BAD_REQUEST, "LETTER_ANALYSIS_FAILED", "편지 분석에 실패했습니다."),
+
+    LETTER_ANALYSIS_BAD_REQUEST(HttpStatus.BAD_REQUEST, "LETTER_ANALYSIS_BAD_REQUEST", "편지 분석 AI 모델 요청에 오류가 발생했습니다."),
+    LETTER_ANALYSIS_MODEL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "LETTER_ANALYSIS_MODEL_ERROR", "편지 분석 AI 모델의 서버 오류가 발생했습니다.")
     ;
 
     private final HttpStatus httpStatus;
