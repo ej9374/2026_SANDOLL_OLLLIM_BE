@@ -40,7 +40,7 @@ public class LetterShareService {
      * @return
      */
     public SecretLetterKeyResponse getLetterSecretKeyByLetterId(Long userId, Long letterId) {
-        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId))
+        if (!letterRepository.existsByLetterIdAndSenderUserId(letterId, userId) && !receiverLetterRepository.existsByIdReceiverIdAndIdLetterId(userId, letterId))
             throw new LetterException(LetterErrorStatus.NOT_OWN_LETTER);
         try{
             String secretLetterKey = aesUtil.encrypt(letterId);
