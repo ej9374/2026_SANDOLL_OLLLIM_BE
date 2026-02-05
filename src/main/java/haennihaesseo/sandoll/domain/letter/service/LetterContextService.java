@@ -38,9 +38,8 @@ public class LetterContextService {
         CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        ContextAnalysisRequest request = new ContextAnalysisRequest(cachedLetter.getContent(), 3); // todo count=3 수정예정
+        ContextAnalysisRequest request = new ContextAnalysisRequest(cachedLetter.getContent(), 3);
 
-        // todo error 코드 추가 예정
         pythonAnalysisClient.requestContextAnalysis(request)
                 .publishOn(Schedulers.boundedElastic())
                 .doOnNext(event -> {
@@ -54,7 +53,6 @@ public class LetterContextService {
                     if ("analyze".equals(event.getStep())) {
                         // 분석 결과 처리
                         JsonNode analysis = event.getData().get("analysis");
-                        // 바탕으로 폰트 추천 알고리즘 구축 FontRecommendService 및 캐시에 저장
                         fontContextRecommendService.saveContextFontsInLetter(letterId, analysis);
                         log.info("[폰트 추천 저장] letterId = {}", letterId);
                     } else if ("done".equals(event.getStep())) {

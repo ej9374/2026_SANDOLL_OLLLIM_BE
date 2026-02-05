@@ -28,7 +28,7 @@ public class LetterDetailService {
         Letter letter = letterRepository.findWithAllDetails(letterId)
                 .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-        List<Word> words = wordRepository.findByLetterLetterIdOrderByCreatedAtAsc(letterId);
+        List<Word> words = wordRepository.findByLetterLetterIdOrderByWordIdAsc(letterId);
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                 letter.getTemplate(), letter.getFont(),
@@ -36,7 +36,7 @@ public class LetterDetailService {
     }
 
     public LetterDetailResponse getLetterDetails(Letter letter) {
-        List<Word> words = wordRepository.findByLetterLetterIdOrderByCreatedAtAsc(letter.getLetterId());
+        List<Word> words = wordRepository.findByLetterLetterIdOrderByWordIdAsc(letter.getLetterId());
 
         return letterBoxConverter.toLetterDetailResponse(letter, letter.getBgm(),
                 letter.getTemplate(), letter.getFont(),
