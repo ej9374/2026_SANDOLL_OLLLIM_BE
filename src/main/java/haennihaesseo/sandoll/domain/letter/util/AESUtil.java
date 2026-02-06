@@ -23,7 +23,7 @@ public class AESUtil {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec);
             byte[] bytes = cipher.doFinal(String.valueOf(letterId).getBytes());
-            return Base64.getEncoder().encodeToString(bytes);
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
         } catch (Exception e) {
             throw new GlobalException(LetterErrorStatus.LETTER_ENCRYPT_FAILED);
         }
@@ -34,7 +34,7 @@ public class AESUtil {
             SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, keySpec);
-            byte[] encryptedBytes = Base64.getDecoder().decode(secretLetterKey);
+            byte[] encryptedBytes = Base64.getUrlDecoder().decode(secretLetterKey);
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             return Long.parseLong((new String(decryptedBytes)));
         } catch (Exception e) {
