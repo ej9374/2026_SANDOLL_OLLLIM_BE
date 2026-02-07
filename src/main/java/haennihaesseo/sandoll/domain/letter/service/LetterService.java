@@ -39,10 +39,10 @@ public class LetterService {
    * @param file
    * @return
    */
-  public VoiceSaveResponse saveVoiceFile(MultipartFile file) {
+  public VoiceSaveResponse saveVoiceFile(MultipartFile file, int duration) {
 
     // 1. STT 처리 (S3 업로드 전에 처리)
-    SttResult sttResult = googleSttClient.transcribe(file);
+    SttResult sttResult = googleSttClient.transcribe(file, duration);
 
     // 10글자 이하일 경우 예외 처리
     if (sttResult.getFullText().replaceAll("\\s+", "").length() <= MIN_CONTENT_LENGTH) {

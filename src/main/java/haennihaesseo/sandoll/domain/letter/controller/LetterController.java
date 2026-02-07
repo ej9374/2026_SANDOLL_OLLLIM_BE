@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,9 +43,10 @@ public class LetterController {
   @Operation(summary = "[3.1] 녹음 파일 저장 및 STT 편지 내용 조회, 편지 작성 키 발급")
   @PostMapping(value = "/voice", consumes = "multipart/form-data")
   public ResponseEntity<ApiResponse<VoiceSaveResponse>> saveVoiceFile(
-      @RequestPart(value = "voice") MultipartFile voiceFile
+      @RequestPart(value = "voice") MultipartFile voiceFile,
+      @RequestParam(value = "duration") int duration
   ) {
-    VoiceSaveResponse responses = letterService.saveVoiceFile(voiceFile);
+    VoiceSaveResponse responses = letterService.saveVoiceFile(voiceFile, duration);
     return ApiResponse.success(LetterSuccessStatus.SUCCESS_301, responses);
   }
 
