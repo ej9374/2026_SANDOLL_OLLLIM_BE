@@ -54,6 +54,7 @@ public class LetterBoxConverter {
         return LetterDetailResponse.VoiceInfo.builder()
                 .voiceId(voice.getVoiceId())
                 .voiceUrl(voice.getVoiceUrl())
+                .duration(voice.getDuration())
                 .build();
     }
 

@@ -27,7 +27,7 @@ public class LetterDetailResponse {
     @Builder
     public record FontInfo(Long fontId, String fontUrl) {}
     @Builder
-    public record VoiceInfo(Long voiceId, String voiceUrl) {}
+    public record VoiceInfo(Long voiceId, String voiceUrl, Integer duration) {}
     @Builder
     public record WordInfo(Long wordId, String word, Double startTime, Double endTime) {}
 }
