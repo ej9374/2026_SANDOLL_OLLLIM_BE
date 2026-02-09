@@ -41,6 +41,7 @@ public class TokenService {
 
     // 액세스 토큰 및 리프레시 토큰 발급
     String accessToken = jwtUtil.generateAccessToken(user.getUserId());
+    log.info("액세스 토큰 발급 userId={} accessToken={}", userId, accessToken);
 
     // 이미 리프레쉬토큰 있으면 삭제 후 발급
     redisClient.deleteData("REFRESH_TOKEN_", userId.toString());
