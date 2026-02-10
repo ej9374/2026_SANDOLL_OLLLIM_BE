@@ -79,7 +79,7 @@ public class FontService {
     } else {
       List<ContextFontResponse> contextFontResponses = cachedLetter.getContextFonts();
 
-      if (contextFontResponses == null)
+      if (contextFontResponses == null || contextFontResponses.isEmpty())
         throw new FontException(FontErrorStatus.FONT_RECOMMENDATION_IN_PROGRESS);
 
       List<RecommendFont> contextResponse = contextFontResponses.stream()
