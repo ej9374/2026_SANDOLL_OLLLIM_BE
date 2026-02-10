@@ -3,6 +3,7 @@ package haennihaesseo.sandoll.domain.font.controller;
 import haennihaesseo.sandoll.domain.font.dto.request.FontSettingRequest;
 import haennihaesseo.sandoll.domain.font.dto.response.RecommendFontResponse;
 import haennihaesseo.sandoll.domain.font.dto.response.RefreshFontResponse;
+import haennihaesseo.sandoll.domain.font.entity.enums.FontType;
 import haennihaesseo.sandoll.domain.font.service.FontService;
 import haennihaesseo.sandoll.domain.font.status.FontSuccessStatus;
 import haennihaesseo.sandoll.global.response.ApiResponse;
@@ -12,12 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Font Setting", description = "폰트 설정 및 추천 API")
 @RestController
@@ -45,9 +41,10 @@ public class FontController {
   )
   @GetMapping("/font")
   public ResponseEntity<ApiResponse<RecommendFontResponse>> getRecommendFont(
-      @RequestHeader("letterId") String letterId
+      @RequestHeader("letterId") String letterId,
+      @RequestParam(name = "type", defaultValue = "VOICE") FontType fontType
   ) {
-    RecommendFontResponse response = fontService.getRecommendFonts(letterId);
+    RecommendFontResponse response = fontService.getRecommendFonts(letterId, fontType);
     return ApiResponse.success(FontSuccessStatus.SUCCESS_306, response);
   }
 

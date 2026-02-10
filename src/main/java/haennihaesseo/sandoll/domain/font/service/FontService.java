@@ -67,33 +67,35 @@ public class FontService {
    * @param letterId
    * @return RecommendFontResponse
    */
-  public RecommendFontResponse getRecommendFonts(String letterId) {
+  public RecommendFontResponse getRecommendFonts(String letterId, FontType fontType) {
     // Redis에서 CachedLetter 조회
     CachedLetter cachedLetter = cachedLetterRepository.findById(letterId)
         .orElseThrow(() -> new LetterException(LetterErrorStatus.LETTER_NOT_FOUND));
 
-    List<Font> voiceFonts = fontRepository.findAllByFontIdIn(cachedLetter.getCurrentRecommendFontIds());
-    List<RecommendFont> voiceResponse = fontConverter.toRecommendFontList(voiceFonts, cachedLetter.getVoiceFontKeywords());
+    if (fontType == FontType.VOICE){
+      List<Font> voiceFonts = fontRepository.findAllByFontIdIn(cachedLetter.getCurrentRecommendFontIds());
+      List<RecommendFont> voiceResponse = fontConverter.toRecommendFontList(voiceFonts, cachedLetter.getVoiceFontKeywords());
+      return fontConverter.toRecommendFontResponse(voiceResponse);
+    } else {
+      List<ContextFontResponse> contextFontResponses = cachedLetter.getContextFonts();
 
-    List<ContextFontResponse> contextFontResponses = cachedLetter.getContextFonts();
+      if (contextFontResponses == null)
+        throw new FontException(FontErrorStatus.FONT_RECOMMENDATION_IN_PROGRESS);
 
-    if (contextFontResponses == null)
-      throw new FontException(FontErrorStatus.FONT_RECOMMENDATION_IN_PROGRESS);
-
-    List<RecommendFont> contextResponse = contextFontResponses.stream()
-            .map(cf ->{
-              Font font = fontRepository.findById(cf.getFontId())
-                      .orElseThrow(() -> new FontException(FontErrorStatus.FONT_NOT_FOUND));
-              return new RecommendFont(
-                      font.getFontId(),
-                      font.getName(),
-                      font.getFontUrl(),
-                      cf.getKeywords()
-              );
-            })
-            .toList();
-
-    return fontConverter.toRecommendFontResponse(voiceResponse, contextResponse);
+      List<RecommendFont> contextResponse = contextFontResponses.stream()
+              .map(cf ->{
+                Font font = fontRepository.findById(cf.getFontId())
+                        .orElseThrow(() -> new FontException(FontErrorStatus.FONT_NOT_FOUND));
+                return new RecommendFont(
+                        font.getFontId(),
+                        font.getName(),
+                        font.getFontUrl(),
+                        cf.getKeywords()
+                );
+              })
+              .toList();
+      return fontConverter.toRecommendFontResponse(contextResponse);
+    }
   }
 
   /**

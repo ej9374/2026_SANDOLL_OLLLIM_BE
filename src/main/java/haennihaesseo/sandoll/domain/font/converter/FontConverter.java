@@ -36,10 +36,9 @@ public class FontConverter {
         .toList();
   }
 
-  public RecommendFontResponse toRecommendFontResponse(List<RecommendFont> voiceFont, List<RecommendFont> contextFont) {
+  public RecommendFontResponse toRecommendFontResponse(List<RecommendFont> fonts) {
     return RecommendFontResponse.builder()
-        .voiceFonts(voiceFont)
-        .contextFonts(contextFont)
+        .fonts(fonts)
         .build();
   }
 }

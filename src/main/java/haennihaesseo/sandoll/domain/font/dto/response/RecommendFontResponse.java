@@ -10,6 +10,5 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class RecommendFontResponse {
-  List<RecommendFont> voiceFonts;
-  List<RecommendFont> contextFonts;
+  List<RecommendFont> fonts;
 }
